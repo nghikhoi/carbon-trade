@@ -32,6 +32,7 @@ import uit.carbon_shop.model.ProjectDTO;
 import uit.carbon_shop.model.ProjectReviewDTO;
 import uit.carbon_shop.model.ProjectStatus;
 import uit.carbon_shop.model.UserRole;
+import uit.carbon_shop.model.UserUserDetails;
 import uit.carbon_shop.service.CompanyReviewService;
 import uit.carbon_shop.service.CompanyService;
 import uit.carbon_shop.service.IdGeneratorService;
@@ -71,7 +72,7 @@ public class BuyerController {
         projectReviewDTO.setRate(buyerReviewProject.getRate());
         projectReviewDTO.setImages(buyerReviewProject.getImages());
         projectReviewDTO.setProject(projectId);
-        projectReviewDTO.setReviewBy(Long.parseLong(authentication.getName()));
+        projectReviewDTO.setReviewBy(((UserUserDetails) authentication.getPrincipal()).getUserId());
         projectReviewService.create(projectReviewDTO);
         return ResponseEntity.ok().build();
     }
@@ -102,7 +103,7 @@ public class BuyerController {
         orderDTO.setPrice(project.getPrice());
         orderDTO.setCreditAmount(project.getCreditAmount());
         orderDTO.setProject(project.getProjectId());
-        orderDTO.setCreatedBy(Long.parseLong(authentication.getName()));
+        orderDTO.setCreatedBy(((UserUserDetails) authentication.getPrincipal()).getUserId());
         orderDTO.setStatus(OrderStatus.INIT);
         orderService.create(orderDTO);
         return ResponseEntity.ok(orderService.get(orderId));
@@ -114,8 +115,8 @@ public class BuyerController {
             @RequestParam(name = "filter", required = false) final String filter,
             @Parameter(hidden = true) @SortDefault(sort = "projectId") @PageableDefault(size = 20) final Pageable pageable,
             Authentication authentication) {
-        Page<OrderDTO> page = status == null ? orderService.findAllCreatedBy(Long.parseLong(authentication.getName()), pageable)
-                : orderService.findAllByStatusAndCreatedBy(status, Long.parseLong(authentication.getName()), pageable);
+        Page<OrderDTO> page = status == null ? orderService.findAllCreatedBy(((UserUserDetails) authentication.getPrincipal()).getUserId(), pageable)
+                : orderService.findAllByStatusAndCreatedBy(status, ((UserUserDetails) authentication.getPrincipal()).getUserId(), pageable);
         return ResponseEntity.ok(new PagedOrderDTO(page));
     }
 
@@ -136,7 +137,7 @@ public class BuyerController {
         companyReviewDTO.setRate(buyerReviewCompany.getRate());
         companyReviewDTO.setImages(buyerReviewCompany.getImages());
         companyReviewDTO.setCompany(companyId);
-        companyReviewDTO.setReviewBy(Long.parseLong(authentication.getName()));
+        companyReviewDTO.setReviewBy(((UserUserDetails) authentication.getPrincipal()).getUserId());
         companyReviewService.create(companyReviewDTO);
         return ResponseEntity.ok().build();
     }

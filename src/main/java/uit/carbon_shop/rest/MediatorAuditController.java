@@ -36,6 +36,7 @@ import uit.carbon_shop.model.ProjectStatus;
 import uit.carbon_shop.model.QuestionDTO;
 import uit.carbon_shop.model.UserRole;
 import uit.carbon_shop.model.UserStatus;
+import uit.carbon_shop.model.UserUserDetails;
 import uit.carbon_shop.service.AppUserService;
 import uit.carbon_shop.service.CompanyService;
 import uit.carbon_shop.service.OrderService;
@@ -151,7 +152,7 @@ public class MediatorAuditController {
     public ResponseEntity<Void> approveProject(
             @PathVariable(name = "projectId") final Long projectId,
             Authentication authentication) {
-        var userId = Long.parseLong(authentication.getName());
+        var userId = ((UserUserDetails) authentication.getPrincipal()).getUserId();
         var project = projectService.get(projectId);
         project.setStatus(ProjectStatus.APPROVED);
         project.setAuditBy(userId);

@@ -31,6 +31,7 @@ import uit.carbon_shop.model.ProjectStatus;
 import uit.carbon_shop.model.SellerRegisterProjectDTO;
 import uit.carbon_shop.model.SellerReviewCompany;
 import uit.carbon_shop.model.UserRole;
+import uit.carbon_shop.model.UserUserDetails;
 import uit.carbon_shop.service.AppUserService;
 import uit.carbon_shop.service.CompanyReviewService;
 import uit.carbon_shop.service.CompanyService;
@@ -56,7 +57,7 @@ public class SellerController {
     public ResponseEntity<ProjectDTO> registerProject(
             @RequestBody @Valid final SellerRegisterProjectDTO sellerRegisterProjectDTO,
             Authentication authentication) {
-        long userId = Long.parseLong(authentication.getName());
+        long userId = ((UserUserDetails) authentication.getPrincipal()).getUserId();
         AppUserDTO appUser = appUserService.get(userId);
         ProjectDTO projectDTO = new ProjectDTO();
         projectDTO.setProjectId(idGeneratorService.generateId());
@@ -90,7 +91,7 @@ public class SellerController {
             @RequestParam(name = "filter", required = false) final String filter,
             @Parameter(hidden = true) @SortDefault(sort = "projectId") @PageableDefault(size = 20) final Pageable pageable,
             Authentication authentication) {
-        long userId = Long.parseLong(authentication.getName());
+        long userId = ((UserUserDetails) authentication.getPrincipal()).getUserId();
         AppUserDTO appUser = appUserService.get(userId);
         return ResponseEntity.ok(new PagedProjectDTO(projectService.findAllByOwner(appUser.getCompany(), filter, pageable)));
     }
@@ -107,7 +108,7 @@ public class SellerController {
             @RequestParam(name = "filter", required = false) final String filter,
             @Parameter(hidden = true) @SortDefault(sort = "orderId") @PageableDefault(size = 20) final Pageable pageable,
             Authentication authentication) {
-        long userId = Long.parseLong(authentication.getName());
+        long userId = ((UserUserDetails) authentication.getPrincipal()).getUserId();
         AppUserDTO appUser = appUserService.get(userId);
         var page =  status == null ? orderService.findByOwnerCompany(appUser.getCompany(), pageable)
                 : orderService.findByStatusAndOwnerCompany(status, appUser.getCompany(), pageable);
@@ -131,7 +132,7 @@ public class SellerController {
         companyReviewDTO.setRate(sellerReviewCompany.getRate());
         companyReviewDTO.setImages(sellerReviewCompany.getImages());
         companyReviewDTO.setCompany(companyId);
-        companyReviewDTO.setReviewBy(Long.parseLong(authentication.getName()));
+        companyReviewDTO.setReviewBy(((UserUserDetails) authentication.getPrincipal()).getUserId());
         companyReviewService.create(companyReviewDTO);
         return ResponseEntity.ok().build();
     }

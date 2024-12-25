@@ -28,6 +28,7 @@ import uit.carbon_shop.model.ProjectDTO;
 import uit.carbon_shop.model.QuestionDTO;
 import uit.carbon_shop.model.UserAskDTO;
 import uit.carbon_shop.model.UserRole;
+import uit.carbon_shop.model.UserUserDetails;
 import uit.carbon_shop.service.AppUserService;
 import uit.carbon_shop.service.CompanyReviewService;
 import uit.carbon_shop.service.CompanyService;
@@ -55,7 +56,7 @@ public class UserController {
     @PostMapping("/question")
     public ResponseEntity<QuestionDTO> newQuestion(@RequestBody @Valid final UserAskDTO userAskDTO,
             Authentication authentication) {
-        var userId = Long.parseLong(authentication.getName());
+        var userId = ((UserUserDetails) authentication.getPrincipal()).getUserId();
         var question = new QuestionDTO();
         question.setId(idGeneratorService.generateId());
         question.setQuestion(userAskDTO.getQuestion());

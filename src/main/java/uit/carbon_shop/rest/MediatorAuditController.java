@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
@@ -18,29 +19,28 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uit.carbon_shop.model.AppUserDTO;
+import uit.carbon_shop.model.CompanyDTO;
 import uit.carbon_shop.model.MediatorAnswerDTO;
-import uit.carbon_shop.model.MediatorApproveProjectDTO;
-import uit.carbon_shop.model.MediatorApproveUserDTO;
-import uit.carbon_shop.model.MediatorCancelOrderDTO;
 import uit.carbon_shop.model.MediatorDoneOrderDTO;
-import uit.carbon_shop.model.MediatorProcessOrderDTO;
-import uit.carbon_shop.model.MediatorRejectProjectDTO;
-import uit.carbon_shop.model.MediatorRejectUserDTO;
 import uit.carbon_shop.model.OrderDTO;
 import uit.carbon_shop.model.OrderStatus;
 import uit.carbon_shop.model.PagedAppUserDTO;
+import uit.carbon_shop.model.PagedOrderDTO;
 import uit.carbon_shop.model.PagedProjectDTO;
 import uit.carbon_shop.model.PagedQuestionDTO;
+import uit.carbon_shop.model.ProjectDTO;
 import uit.carbon_shop.model.ProjectStatus;
+import uit.carbon_shop.model.QuestionDTO;
 import uit.carbon_shop.model.UserRole;
 import uit.carbon_shop.model.UserStatus;
 import uit.carbon_shop.service.AppUserService;
+import uit.carbon_shop.service.CompanyService;
 import uit.carbon_shop.service.OrderService;
 import uit.carbon_shop.service.ProjectService;
 import uit.carbon_shop.service.QuestionService;
-
 
 @RestController
 @RequestMapping(value = "/api/mediator/audit", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -53,6 +53,7 @@ public class MediatorAuditController {
     private final AppUserService appUserService;
     private final ProjectService projectService;
     private final QuestionService questionService;
+    private final CompanyService companyService;
 
     @PatchMapping("/order/{orderId}/process")
     public ResponseEntity<OrderDTO> startProcessOrder(
@@ -74,17 +75,40 @@ public class MediatorAuditController {
 
     @PatchMapping("/order/{orderId}/done")
     public ResponseEntity<OrderDTO> doneProcessOrder(
-            @PathVariable(name = "orderId") final Long orderId) {
+            @PathVariable(name = "orderId") final Long orderId,
+            @RequestBody @Valid MediatorDoneOrderDTO mediatorDoneOrderDTO
+    ) {
         var order = orderService.get(orderId);
         order.setStatus(OrderStatus.DONE);
+        order.setContractFile(mediatorDoneOrderDTO.getContractFile());
+        order.setCertImages(mediatorDoneOrderDTO.getCertImages());
+        order.setPaymentBillFile(mediatorDoneOrderDTO.getPaymentBillFile());
         orderService.update(orderId, order);
         return ResponseEntity.ok(order);
     }
 
+    @GetMapping("/order/{orderId}")
+    public ResponseEntity<OrderDTO> viewOrder(
+            @PathVariable(name = "orderId") final Long orderId) {
+        return ResponseEntity.ok(orderService.get(orderId));
+    }
+
+    @GetMapping("/orders")
+    public ResponseEntity<PagedOrderDTO> viewAllOrder(
+            @RequestParam(name = "status", required = false) OrderStatus status,
+            @Parameter(hidden = true) @SortDefault(sort = "orderId") @PageableDefault(size = 20) final Pageable pageable) {
+        Page<OrderDTO> page =
+                status == null ? orderService.findAll(null, pageable) : orderService.findByStatus(status, pageable);
+        return ResponseEntity.ok(new PagedOrderDTO(page));
+    }
+
     @GetMapping("/users/init")
     public ResponseEntity<PagedAppUserDTO> viewAllUser(
+            @RequestParam(name = "status", required = false) final UserStatus status,
             @Parameter(hidden = true) @SortDefault(sort = "userId") @PageableDefault(size = 20) final Pageable pageable) {
-        return ResponseEntity.ok(new PagedAppUserDTO(appUserService.findByStatus(UserStatus.INIT, pageable)));
+        Page<AppUserDTO> page = status == null ? appUserService.findAll(null, pageable)
+                : appUserService.findByStatus(status, pageable);
+        return ResponseEntity.ok(new PagedAppUserDTO(page));
     }
 
     @PatchMapping("/user/{userId}/approve")
@@ -107,10 +131,20 @@ public class MediatorAuditController {
         return ResponseEntity.ok(appUser);
     }
 
-    @GetMapping("/projects/init")
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<AppUserDTO> viewUser(
+            @PathVariable(name = "userId") final Long userId) {
+        return ResponseEntity.ok(appUserService.get(userId));
+    }
+
+    @GetMapping("/projects")
     public ResponseEntity<PagedProjectDTO> viewAllProject(
+            @RequestParam(name = "status", required = false) final ProjectStatus status,
+            @RequestParam(name = "filter", required = false) final String filter,
             @Parameter(hidden = true) @SortDefault(sort = "projectId") @PageableDefault(size = 20) final Pageable pageable) {
-        return ResponseEntity.ok(new PagedProjectDTO(projectService.findByStatus(ProjectStatus.INIT, pageable)));
+        Page<ProjectDTO> page = status == null ? projectService.findAll(filter, pageable)
+                : projectService.findByStatus(status, filter, pageable);
+        return ResponseEntity.ok(new PagedProjectDTO(page));
     }
 
     @PatchMapping("/project/{projectId}/approve")
@@ -134,10 +168,22 @@ public class MediatorAuditController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/project/{projectId}")
+    public ResponseEntity<ProjectDTO> viewProject(
+            @PathVariable(name = "projectId") final Long projectId) {
+        return ResponseEntity.ok(projectService.get(projectId));
+    }
+
     @GetMapping("/questions/init")
     public ResponseEntity<PagedQuestionDTO> viewAllQuestion(
             @Parameter(hidden = true) @SortDefault(sort = "questionId") @PageableDefault(size = 20) final Pageable pageable) {
         return ResponseEntity.ok(new PagedQuestionDTO(questionService.findByAnswerIsNull(pageable)));
+    }
+
+    @GetMapping("/question/{questionId}")
+    public ResponseEntity<QuestionDTO> viewQuestion(
+            @PathVariable(name = "questionId") final Long questionId) {
+        return ResponseEntity.ok(questionService.get(questionId));
     }
 
     @PatchMapping("/question/{questionId}")
@@ -157,6 +203,12 @@ public class MediatorAuditController {
         question.setAnswer(null);
         questionService.update(questionId, question);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/company/{companyId}")
+    public ResponseEntity<CompanyDTO> viewCompany(
+            @PathVariable(name = "companyId") final Long companyId) {
+        return ResponseEntity.ok(companyService.get(companyId));
     }
 
 }

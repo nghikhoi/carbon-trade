@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uit.carbon_shop.domain.Order;
 import uit.carbon_shop.model.OrderDTO;
+import uit.carbon_shop.model.OrderStatus;
 import uit.carbon_shop.repos.AppUserRepository;
 import uit.carbon_shop.repos.OrderRepository;
 import uit.carbon_shop.repos.ProjectRepository;
@@ -58,8 +59,35 @@ public class OrderService {
                 pageable, page.getTotalElements());
     }
 
+    public Page<OrderDTO> findAllByStatusAndCreatedBy(final OrderStatus status, final Long userId, final Pageable pageable) {
+        final Page<Order> page = orderRepository.findByCreatedBy_UserIdAndStatus(userId, status, pageable);
+        return new PageImpl<>(page.getContent()
+                .stream()
+                .map(order -> orderMapper.updateOrderDTO(order, new OrderDTO()))
+                .toList(),
+                pageable, page.getTotalElements());
+    }
+
     public Page<OrderDTO> findByOwnerCompany(final Long companyId, final Pageable pageable) {
         final Page<Order> page = orderRepository.findByProject_OwnerCompany_Id(companyId, pageable);
+        return new PageImpl<>(page.getContent()
+                .stream()
+                .map(order -> orderMapper.updateOrderDTO(order, new OrderDTO()))
+                .toList(),
+                pageable, page.getTotalElements());
+    }
+
+    public Page<OrderDTO> findByStatusAndOwnerCompany(final OrderStatus status, final Long companyId, final Pageable pageable) {
+        final Page<Order> page = orderRepository.findByProject_OwnerCompany_IdAndStatus(companyId, status, pageable);
+        return new PageImpl<>(page.getContent()
+                .stream()
+                .map(order -> orderMapper.updateOrderDTO(order, new OrderDTO()))
+                .toList(),
+                pageable, page.getTotalElements());
+    }
+
+    public Page<OrderDTO> findByStatus(OrderStatus status, Pageable pageable) {
+        final Page<Order> page = orderRepository.findByStatus(status, pageable);
         return new PageImpl<>(page.getContent()
                 .stream()
                 .map(order -> orderMapper.updateOrderDTO(order, new OrderDTO()))

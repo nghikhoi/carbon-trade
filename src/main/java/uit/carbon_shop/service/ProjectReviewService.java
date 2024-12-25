@@ -49,6 +49,15 @@ public class ProjectReviewService {
                 pageable, page.getTotalElements());
     }
 
+    public Page<ProjectReviewDTO> findAllByProject(final Long projectId, final Pageable pageable) {
+        final Page<ProjectReview> page = projectReviewRepository.findByProject_ProjectId(projectId, pageable);
+        return new PageImpl<>(page.getContent()
+                .stream()
+                .map(projectReview -> projectReviewMapper.updateProjectReviewDTO(projectReview, new ProjectReviewDTO()))
+                .toList(),
+                pageable, page.getTotalElements());
+    }
+
     public ProjectReviewDTO get(final Long id) {
         return projectReviewRepository.findById(id)
                 .map(projectReview -> projectReviewMapper.updateProjectReviewDTO(projectReview, new ProjectReviewDTO()))

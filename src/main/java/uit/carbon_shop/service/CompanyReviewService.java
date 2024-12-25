@@ -49,6 +49,15 @@ public class CompanyReviewService {
                 pageable, page.getTotalElements());
     }
 
+    public Page<CompanyReviewDTO> findAllByCompany(final Long companyId, final Pageable pageable) {
+        final Page<CompanyReview> page = companyReviewRepository.findByCompany_Id(companyId, pageable);
+        return new PageImpl<>(page.getContent()
+                .stream()
+                .map(companyReview -> companyReviewMapper.updateCompanyReviewDTO(companyReview, new CompanyReviewDTO()))
+                .toList(),
+                pageable, page.getTotalElements());
+    }
+
     public CompanyReviewDTO get(final Long id) {
         return companyReviewRepository.findById(id)
                 .map(companyReview -> companyReviewMapper.updateCompanyReviewDTO(companyReview, new CompanyReviewDTO()))

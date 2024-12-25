@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import uit.carbon_shop.domain.Order;
 import uit.carbon_shop.domain.Project;
 import uit.carbon_shop.domain.ProjectReview;
@@ -62,8 +63,11 @@ public class ProjectService {
                 pageable, page.getTotalElements());
     }
 
-    public Page<ProjectDTO> findAllByOwner(final Long ownerCompany, final Pageable pageable) {
-        final Page<Project> page = projectRepository.findByOwnerCompany_Id(ownerCompany, pageable);
+    public Page<ProjectDTO> findAllByOwner(final Long ownerCompany, String filter, final Pageable pageable) {
+        final Page<Project> page =
+                StringUtils.hasText(filter) ? projectRepository.findByOwnerCompany_IdAndNameContainsIgnoreCase(
+                        ownerCompany, filter, pageable)
+                        : projectRepository.findByOwnerCompany_Id(ownerCompany, pageable);
         return new PageImpl<>(page.getContent()
                 .stream()
                 .map(project -> projectMapper.updateProjectDTO(project, new ProjectDTO()))
@@ -71,8 +75,10 @@ public class ProjectService {
                 pageable, page.getTotalElements());
     }
 
-    public Page<ProjectDTO> findByStatus(ProjectStatus status, Pageable pageable) {
-        final Page<Project> page = projectRepository.findByStatus(status, pageable);
+    public Page<ProjectDTO> findByStatus(ProjectStatus status, String filter, Pageable pageable) {
+        final Page<Project> page = StringUtils.hasText(filter) ? projectRepository.findByStatusAndNameContainsIgnoreCase(
+                status, filter, pageable)
+                : projectRepository.findByStatus(status, pageable);
         return new PageImpl<>(page.getContent()
                 .stream()
                 .map(project -> projectMapper.updateProjectDTO(project, new ProjectDTO()))

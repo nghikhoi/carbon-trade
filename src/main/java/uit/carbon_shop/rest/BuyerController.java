@@ -30,6 +30,7 @@ import uit.carbon_shop.model.PagedOrderDTO;
 import uit.carbon_shop.model.PagedProjectDTO;
 import uit.carbon_shop.model.ProjectDTO;
 import uit.carbon_shop.model.ProjectReviewDTO;
+import uit.carbon_shop.model.ProjectStatus;
 import uit.carbon_shop.model.UserRole;
 import uit.carbon_shop.service.CompanyReviewService;
 import uit.carbon_shop.service.CompanyService;
@@ -41,7 +42,7 @@ import uit.carbon_shop.service.ProjectService;
 
 @RestController
 @RequestMapping(value = "/api/buyer", produces = MediaType.APPLICATION_JSON_VALUE)
-@PreAuthorize("hasAuthority('" + UserRole.Fields.SELLER_OR_BUYER + "')")
+@PreAuthorize("hasAnyAuthority('" + UserRole.Fields.SELLER_OR_BUYER + "', '" + UserRole.Fields.MEDIATOR + "')")
 @SecurityRequirement(name = "bearer-jwt")
 @RequiredArgsConstructor
 public class BuyerController {
@@ -77,9 +78,12 @@ public class BuyerController {
 
     @GetMapping("/projects")
     public ResponseEntity<PagedProjectDTO> viewAllProject(
+            @RequestParam(name = "status", required = false) final ProjectStatus status,
             @RequestParam(name = "filter", required = false) final String filter,
             @Parameter(hidden = true) @SortDefault(sort = "projectId") @PageableDefault(size = 20) final Pageable pageable) {
-        return ResponseEntity.ok(new PagedProjectDTO(projectService.findAll(filter, pageable)));
+        Page<ProjectDTO> page = status == null ? projectService.findAll(filter, pageable)
+                : projectService.findByStatus(status, filter, pageable);
+        return ResponseEntity.ok(new PagedProjectDTO(page));
     }
 
     @GetMapping("/order/{orderId}")
@@ -106,10 +110,13 @@ public class BuyerController {
 
     @GetMapping("/orders")
     public ResponseEntity<PagedOrderDTO> viewAllOrders(
+            @RequestParam(name = "status", required = false) OrderStatus status,
             @RequestParam(name = "filter", required = false) final String filter,
             @Parameter(hidden = true) @SortDefault(sort = "projectId") @PageableDefault(size = 20) final Pageable pageable,
             Authentication authentication) {
-        return ResponseEntity.ok(new PagedOrderDTO(orderService.findAllCreatedBy(Long.parseLong(authentication.getName()), pageable)));
+        Page<OrderDTO> page = status == null ? orderService.findAllCreatedBy(Long.parseLong(authentication.getName()), pageable)
+                : orderService.findAllByStatusAndCreatedBy(status, Long.parseLong(authentication.getName()), pageable);
+        return ResponseEntity.ok(new PagedOrderDTO(page));
     }
 
     @GetMapping("/company/{companyId}")

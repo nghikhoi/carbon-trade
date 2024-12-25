@@ -12,6 +12,8 @@ public interface CompanyReviewRepository extends JpaRepository<CompanyReview, Lo
 
     Page<CompanyReview> findAllById(Long id, Pageable pageable);
 
+    Page<CompanyReview> findByCompany_Id(Long id, Pageable pageable);
+
     CompanyReview findFirstByCompany(Company company);
 
     CompanyReview findFirstByReviewBy(AppUser appUser);

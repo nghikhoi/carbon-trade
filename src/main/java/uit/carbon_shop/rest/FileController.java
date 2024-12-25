@@ -38,7 +38,7 @@ public class FileController {
     @SneakyThrows
     @PreAuthorize("hasAnyAuthority('" + UserRole.Fields.SELLER_OR_BUYER + "', '" + UserRole.Fields.MEDIATOR + "')")
     @SecurityRequirement(name = "bearer-jwt")
-    public ResponseEntity<Void> upload(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<Long> upload(@RequestParam("file") MultipartFile file) {
         FileDocument fileDocument = new FileDocument();
         fileDocument.setId(idGeneratorService.generateId());
         fileDocument.setName(file.getOriginalFilename());
@@ -46,7 +46,7 @@ public class FileController {
         fileRepository.save(fileDocument);
         fileContentStore.setContent(fileDocument, file.getInputStream());
         fileRepository.save(fileDocument);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(fileDocument.getId());
     }
 
     @GetMapping("/{fileId}")

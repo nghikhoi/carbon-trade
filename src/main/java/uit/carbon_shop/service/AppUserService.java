@@ -77,6 +77,12 @@ public class AppUserService {
                 pageable, page.getTotalElements());
     }
 
+    public AppUserDTO findByCompany(final Long companyId) {
+        return appUserRepository.findByCompany_Id(companyId)
+                .map(appUser -> appUserMapper.updateAppUserDTO(appUser, new AppUserDTO()))
+                .orElseThrow(NotFoundException::new);
+    }
+
     public Page<AppUserDTO> findByStatus(UserStatus status, final Pageable pageable) {
         final Page<AppUser> page = appUserRepository.findByStatus(status, pageable);
         return new PageImpl<>(page.getContent()

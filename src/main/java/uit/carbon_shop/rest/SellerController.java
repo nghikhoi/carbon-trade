@@ -23,6 +23,7 @@ import uit.carbon_shop.model.AppUserDTO;
 import uit.carbon_shop.model.CompanyDTO;
 import uit.carbon_shop.model.CompanyReviewDTO;
 import uit.carbon_shop.model.OrderDTO;
+import uit.carbon_shop.model.OrderStatus;
 import uit.carbon_shop.model.PagedOrderDTO;
 import uit.carbon_shop.model.PagedProjectDTO;
 import uit.carbon_shop.model.ProjectDTO;
@@ -39,7 +40,7 @@ import uit.carbon_shop.service.ProjectService;
 
 @RestController
 @RequestMapping(value = "/api/seller", produces = MediaType.APPLICATION_JSON_VALUE)
-@PreAuthorize("hasAuthority('" + UserRole.Fields.SELLER_OR_BUYER + "')")
+@PreAuthorize("hasAnyAuthority('" + UserRole.Fields.SELLER_OR_BUYER + "', '" + UserRole.Fields.MEDIATOR + "')")
 @SecurityRequirement(name = "bearer-jwt")
 @RequiredArgsConstructor
 public class SellerController {
@@ -91,7 +92,7 @@ public class SellerController {
             Authentication authentication) {
         long userId = Long.parseLong(authentication.getName());
         AppUserDTO appUser = appUserService.get(userId);
-        return ResponseEntity.ok(new PagedProjectDTO(projectService.findAllByOwner(appUser.getCompany(), pageable)));
+        return ResponseEntity.ok(new PagedProjectDTO(projectService.findAllByOwner(appUser.getCompany(), filter, pageable)));
     }
 
     @GetMapping("/order/{orderId}")
@@ -102,12 +103,15 @@ public class SellerController {
 
     @GetMapping("/orders")
     public ResponseEntity<PagedOrderDTO> viewAllOrders(
+            @RequestParam(name = "status", required = false) final OrderStatus status,
             @RequestParam(name = "filter", required = false) final String filter,
             @Parameter(hidden = true) @SortDefault(sort = "orderId") @PageableDefault(size = 20) final Pageable pageable,
             Authentication authentication) {
         long userId = Long.parseLong(authentication.getName());
         AppUserDTO appUser = appUserService.get(userId);
-        return ResponseEntity.ok(new PagedOrderDTO(orderService.findByOwnerCompany(appUser.getCompany(), pageable)));
+        var page =  status == null ? orderService.findByOwnerCompany(appUser.getCompany(), pageable)
+                : orderService.findByStatusAndOwnerCompany(status, appUser.getCompany(), pageable);
+        return ResponseEntity.ok(new PagedOrderDTO(page));
     }
 
     @GetMapping("/company/{companyId}")

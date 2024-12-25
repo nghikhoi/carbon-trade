@@ -1,5 +1,6 @@
 package uit.carbon_shop.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -19,11 +20,14 @@ public class AppUserDTO {
 
     @NotNull
     @Size(max = 255)
+    @Schema(hidden = true)
     private String password;
 
     @Size(max = 255)
+    @Schema(hidden = true)
     private String resetPasswordUid;
 
+    @Schema(hidden = true)
     private OffsetDateTime resetPasswordStart;
 
     @Size(max = 255)

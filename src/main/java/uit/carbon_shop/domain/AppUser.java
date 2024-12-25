@@ -81,8 +81,8 @@ public class AppUser {
     @ManyToMany
     @JoinTable(
             name = "FavoriteProjectses",
-            joinColumns = @JoinColumn(name = "userId"),
-            inverseJoinColumns = @JoinColumn(name = "projectId")
+            joinColumns = @JoinColumn(name = "id"),
+            inverseJoinColumns = @JoinColumn(name = "id")
     )
     private Set<Project> favoriteProjects;
 

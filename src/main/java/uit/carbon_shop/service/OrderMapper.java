@@ -29,12 +29,12 @@ public interface OrderMapper {
 
     @AfterMapping
     default void afterUpdateOrderDTO(Order order, @MappingTarget OrderDTO orderDTO) {
-        orderDTO.setProject(order.getProject() == null ? null : order.getProject().getProjectId());
-        orderDTO.setProcessBy(order.getProcessBy() == null ? null : order.getProcessBy().getUserId());
-        orderDTO.setCreatedBy(order.getCreatedBy() == null ? null : order.getCreatedBy().getUserId());
+        orderDTO.setProject(order.getProject() == null ? null : order.getProject().getId());
+        orderDTO.setProcessBy(order.getProcessBy() == null ? null : order.getProcessBy().getId());
+        orderDTO.setCreatedBy(order.getCreatedBy() == null ? null : order.getCreatedBy().getId());
     }
 
-    @Mapping(target = "orderId", ignore = true)
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "project", ignore = true)
     @Mapping(target = "processBy", ignore = true)
     @Mapping(target = "createdBy", ignore = true)

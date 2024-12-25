@@ -31,7 +31,7 @@ public interface CompanyReviewMapper {
     default void afterUpdateCompanyReviewDTO(CompanyReview companyReview,
             @MappingTarget CompanyReviewDTO companyReviewDTO) {
         companyReviewDTO.setCompany(companyReview.getCompany() == null ? null : companyReview.getCompany().getId());
-        companyReviewDTO.setReviewBy(companyReview.getReviewBy() == null ? null : companyReview.getReviewBy().getUserId());
+        companyReviewDTO.setReviewBy(companyReview.getReviewBy() == null ? null : companyReview.getReviewBy().getId());
     }
 
     @Mapping(target = "id", ignore = true)

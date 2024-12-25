@@ -88,13 +88,13 @@ public class CompanyService {
         final AppUser companyAppUser = appUserRepository.findFirstByCompany(company);
         if (companyAppUser != null) {
             referencedWarning.setKey("company.appUser.company.referenced");
-            referencedWarning.addParam(companyAppUser.getUserId());
+            referencedWarning.addParam(companyAppUser.getId());
             return referencedWarning;
         }
         final Project ownerCompanyProject = projectRepository.findFirstByOwnerCompany(company);
         if (ownerCompanyProject != null) {
             referencedWarning.setKey("company.project.ownerCompany.referenced");
-            referencedWarning.addParam(ownerCompanyProject.getProjectId());
+            referencedWarning.addParam(ownerCompanyProject.getId());
             return referencedWarning;
         }
         final CompanyReview companyCompanyReview = companyReviewRepository.findFirstByCompany(company);

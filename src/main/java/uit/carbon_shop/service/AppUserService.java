@@ -100,9 +100,9 @@ public class AppUserService {
 
     public Long create(final AppUserDTO appUserDTO) {
         final AppUser appUser = new AppUser();
-        appUser.setUserId(appUserDTO.getUserId());
+        appUser.setId(appUserDTO.getUserId());
         appUserMapper.updateAppUser(appUserDTO, appUser, companyRepository, projectRepository, passwordEncoder);
-        return appUserRepository.save(appUser).getUserId();
+        return appUserRepository.save(appUser).getId();
     }
 
     public void update(final Long userId, final AppUserDTO appUserDTO) {
@@ -127,19 +127,19 @@ public class AppUserService {
         final Project auditByProject = projectRepository.findFirstByAuditBy(appUser);
         if (auditByProject != null) {
             referencedWarning.setKey("appUser.project.auditBy.referenced");
-            referencedWarning.addParam(auditByProject.getProjectId());
+            referencedWarning.addParam(auditByProject.getId());
             return referencedWarning;
         }
         final Order processByOrder = orderRepository.findFirstByProcessBy(appUser);
         if (processByOrder != null) {
             referencedWarning.setKey("appUser.order.processBy.referenced");
-            referencedWarning.addParam(processByOrder.getOrderId());
+            referencedWarning.addParam(processByOrder.getId());
             return referencedWarning;
         }
         final Order createdByOrder = orderRepository.findFirstByCreatedBy(appUser);
         if (createdByOrder != null) {
             referencedWarning.setKey("appUser.order.createdBy.referenced");
-            referencedWarning.addParam(createdByOrder.getOrderId());
+            referencedWarning.addParam(createdByOrder.getId());
             return referencedWarning;
         }
         final CompanyReview reviewByCompanyReview = companyReviewRepository.findFirstByReviewBy(appUser);

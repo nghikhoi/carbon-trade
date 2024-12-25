@@ -29,10 +29,10 @@ public interface ProjectMapper {
     @AfterMapping
     default void afterUpdateProjectDTO(Project project, @MappingTarget ProjectDTO projectDTO) {
         projectDTO.setOwnerCompany(project.getOwnerCompany() == null ? null : project.getOwnerCompany().getId());
-        projectDTO.setAuditBy(project.getAuditBy() == null ? null : project.getAuditBy().getUserId());
+        projectDTO.setAuditBy(project.getAuditBy() == null ? null : project.getAuditBy().getId());
     }
 
-    @Mapping(target = "projectId", ignore = true)
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "ownerCompany", ignore = true)
     @Mapping(target = "auditBy", ignore = true)
     Project updateProject(ProjectDTO projectDTO, @MappingTarget Project project,

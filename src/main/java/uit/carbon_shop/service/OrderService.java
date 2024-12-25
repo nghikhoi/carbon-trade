@@ -103,9 +103,9 @@ public class OrderService {
 
     public Long create(final OrderDTO orderDTO) {
         final Order order = new Order();
-        order.setOrderId(orderDTO.getOrderId());
+        order.setId(orderDTO.getOrderId());
         orderMapper.updateOrder(orderDTO, order, projectRepository, appUserRepository);
-        return orderRepository.save(order).getOrderId();
+        return orderRepository.save(order).getId();
     }
 
     public void update(final Long orderId, final OrderDTO orderDTO) {

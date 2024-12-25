@@ -25,7 +25,7 @@ public interface QuestionMapper {
 
     @AfterMapping
     default void afterUpdateQuestionDTO(Question question, @MappingTarget QuestionDTO questionDTO) {
-        questionDTO.setAskedBy(question.getAskedBy() == null ? null : question.getAskedBy().getUserId());
+        questionDTO.setAskedBy(question.getAskedBy() == null ? null : question.getAskedBy().getId());
     }
 
     @Mapping(target = "id", ignore = true)

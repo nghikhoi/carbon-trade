@@ -34,7 +34,7 @@ public class UserUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User " + username + " not approved");
         }
         final List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(appUser.getRole().name()));
-        return new UserUserDetails(appUser.getUserId(), username, appUser.getPassword(), authorities);
+        return new UserUserDetails(appUser.getId(), username, appUser.getPassword(), authorities);
     }
 
 }

@@ -106,9 +106,9 @@ public class ProjectService {
 
     public Long create(final ProjectDTO projectDTO) {
         final Project project = new Project();
-        project.setProjectId(projectDTO.getProjectId());
+        project.setId(projectDTO.getProjectId());
         projectMapper.updateProject(projectDTO, project, companyRepository, appUserRepository);
-        return projectRepository.save(project).getProjectId();
+        return projectRepository.save(project).getId();
     }
 
     public void update(final Long projectId, final ProjectDTO projectDTO) {
@@ -134,7 +134,7 @@ public class ProjectService {
         final Order projectOrder = orderRepository.findFirstByProject(project);
         if (projectOrder != null) {
             referencedWarning.setKey("project.order.project.referenced");
-            referencedWarning.addParam(projectOrder.getOrderId());
+            referencedWarning.addParam(projectOrder.getId());
             return referencedWarning;
         }
         final ProjectReview projectProjectReview = projectReviewRepository.findFirstByProject(project);

@@ -30,8 +30,8 @@ public interface ProjectReviewMapper {
     @AfterMapping
     default void afterUpdateProjectReviewDTO(ProjectReview projectReview,
             @MappingTarget ProjectReviewDTO projectReviewDTO) {
-        projectReviewDTO.setProject(projectReview.getProject() == null ? null : projectReview.getProject().getProjectId());
-        projectReviewDTO.setReviewBy(projectReview.getReviewBy() == null ? null : projectReview.getReviewBy().getUserId());
+        projectReviewDTO.setProject(projectReview.getProject() == null ? null : projectReview.getProject().getId());
+        projectReviewDTO.setReviewBy(projectReview.getReviewBy() == null ? null : projectReview.getReviewBy().getId());
     }
 
     @Mapping(target = "id", ignore = true)

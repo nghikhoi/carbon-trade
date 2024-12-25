@@ -35,11 +35,11 @@ public interface AppUserMapper {
     default void afterUpdateAppUserDTO(AppUser appUser, @MappingTarget AppUserDTO appUserDTO) {
         appUserDTO.setCompany(appUser.getCompany() == null ? null : appUser.getCompany().getId());
         appUserDTO.setFavoriteProjects(appUser.getFavoriteProjects().stream()
-                .map(project -> project.getProjectId())
+                .map(project -> project.getId())
                 .toList());
     }
 
-    @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "company", ignore = true)
     @Mapping(target = "favoriteProjects", ignore = true)
     @Mapping(target = "password", ignore = true)

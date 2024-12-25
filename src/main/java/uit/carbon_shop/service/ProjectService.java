@@ -75,6 +75,18 @@ public class ProjectService {
                 pageable, page.getTotalElements());
     }
 
+    public Page<ProjectDTO> findAllByOwnerAndStatus(final Long ownerCompany, ProjectStatus status, String filter, final Pageable pageable) {
+        final Page<Project> page =
+                StringUtils.hasText(filter) ? projectRepository.findByOwnerCompany_IdAndStatusAndNameContainsIgnoreCase(
+                        ownerCompany, status, filter, pageable)
+                        : projectRepository.findByOwnerCompany_IdAndStatus(ownerCompany, status, pageable);
+        return new PageImpl<>(page.getContent()
+                .stream()
+                .map(project -> projectMapper.updateProjectDTO(project, new ProjectDTO()))
+                .toList(),
+                pageable, page.getTotalElements());
+    }
+
     public Page<ProjectDTO> findByStatus(ProjectStatus status, String filter, Pageable pageable) {
         final Page<Project> page = StringUtils.hasText(filter) ? projectRepository.findByStatusAndNameContainsIgnoreCase(
                 status, filter, pageable)

@@ -88,12 +88,16 @@ public class SellerController {
 
     @GetMapping("/projects")
     public ResponseEntity<PagedProjectDTO> viewAllProject(
+            @RequestParam(name = "status", required = false) final ProjectStatus status,
             @RequestParam(name = "filter", required = false) final String filter,
             @Parameter(hidden = true) @SortDefault(sort = "projectId") @PageableDefault(size = 20) final Pageable pageable,
             Authentication authentication) {
         long userId = ((UserUserDetails) authentication.getPrincipal()).getUserId();
         AppUserDTO appUser = appUserService.get(userId);
-        return ResponseEntity.ok(new PagedProjectDTO(projectService.findAllByOwner(appUser.getCompany(), filter, pageable)));
+        Page<ProjectDTO> page =
+                status != null ? projectService.findAllByOwnerAndStatus(appUser.getCompany(), status, filter, pageable)
+                        : projectService.findAllByOwner(appUser.getCompany(), filter, pageable);
+        return ResponseEntity.ok(new PagedProjectDTO(page));
     }
 
     @GetMapping("/order/{orderId}")
@@ -110,7 +114,7 @@ public class SellerController {
             Authentication authentication) {
         long userId = ((UserUserDetails) authentication.getPrincipal()).getUserId();
         AppUserDTO appUser = appUserService.get(userId);
-        var page =  status == null ? orderService.findByOwnerCompany(appUser.getCompany(), pageable)
+        var page = status == null ? orderService.findByOwnerCompany(appUser.getCompany(), pageable)
                 : orderService.findByStatusAndOwnerCompany(status, appUser.getCompany(), pageable);
         return ResponseEntity.ok(new PagedOrderDTO(page));
     }

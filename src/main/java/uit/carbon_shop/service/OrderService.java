@@ -39,7 +39,7 @@ public class OrderService {
             } catch (final NumberFormatException numberFormatException) {
                 // keep null - no parseable input
             }
-            page = orderRepository.findAllByOrderId(longFilter, pageable);
+            page = orderRepository.findAllById(longFilter, pageable);
         } else {
             page = orderRepository.findAll(pageable);
         }
@@ -51,7 +51,7 @@ public class OrderService {
     }
 
     public Page<OrderDTO> findAllCreatedBy(final Long userId, final Pageable pageable) {
-        final Page<Order> page = orderRepository.findByCreatedBy_UserId(userId, pageable);
+        final Page<Order> page = orderRepository.findByCreatedBy_Id(userId, pageable);
         return new PageImpl<>(page.getContent()
                 .stream()
                 .map(order -> orderMapper.updateOrderDTO(order, new OrderDTO()))
@@ -60,7 +60,7 @@ public class OrderService {
     }
 
     public Page<OrderDTO> findAllByStatusAndCreatedBy(final OrderStatus status, final Long userId, final Pageable pageable) {
-        final Page<Order> page = orderRepository.findByCreatedBy_UserIdAndStatus(userId, status, pageable);
+        final Page<Order> page = orderRepository.findByCreatedBy_IdAndStatus(userId, status, pageable);
         return new PageImpl<>(page.getContent()
                 .stream()
                 .map(order -> orderMapper.updateOrderDTO(order, new OrderDTO()))

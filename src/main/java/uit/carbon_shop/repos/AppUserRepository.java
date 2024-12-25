@@ -17,7 +17,7 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
 
     AppUser findByResetPasswordUid(String resetPasswordUid);
 
-    Page<AppUser> findAllByUserId(Long userId, Pageable pageable);
+    Page<AppUser> findAllById(Long userId, Pageable pageable);
 
     boolean existsByEmailIgnoreCase(String email);
 

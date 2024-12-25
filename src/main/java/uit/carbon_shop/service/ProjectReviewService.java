@@ -50,7 +50,7 @@ public class ProjectReviewService {
     }
 
     public Page<ProjectReviewDTO> findAllByProject(final Long projectId, final Pageable pageable) {
-        final Page<ProjectReview> page = projectReviewRepository.findByProject_ProjectId(projectId, pageable);
+        final Page<ProjectReview> page = projectReviewRepository.findByProject_Id(projectId, pageable);
         return new PageImpl<>(page.getContent()
                 .stream()
                 .map(projectReview -> projectReviewMapper.updateProjectReviewDTO(projectReview, new ProjectReviewDTO()))

@@ -12,11 +12,11 @@ import uit.carbon_shop.model.OrderStatus;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    Page<Order> findAllByOrderId(Long orderId, Pageable pageable);
+    Page<Order> findAllById(Long orderId, Pageable pageable);
 
-    Page<Order> findByCreatedBy_UserId(Long userId, Pageable pageable);
+    Page<Order> findByCreatedBy_Id(Long userId, Pageable pageable);
 
-    Page<Order> findByCreatedBy_UserIdAndStatus(Long userId, OrderStatus status, Pageable pageable);
+    Page<Order> findByCreatedBy_IdAndStatus(Long userId, OrderStatus status, Pageable pageable);
 
     @Query("select o from Order o where o.project.ownerCompany.id = ?1")
     Page<Order> findByProject_OwnerCompany_Id(Long id, Pageable pageable);

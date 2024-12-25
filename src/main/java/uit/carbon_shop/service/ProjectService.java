@@ -52,7 +52,7 @@ public class ProjectService {
             } catch (final NumberFormatException numberFormatException) {
                 // keep null - no parseable input
             }
-            page = projectRepository.findAllByProjectId(longFilter, pageable);
+            page = projectRepository.findAllById(longFilter, pageable);
         } else {
             page = projectRepository.findAll(pageable);
         }

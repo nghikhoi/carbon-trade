@@ -66,7 +66,7 @@ public class AppUserService {
             } catch (final NumberFormatException numberFormatException) {
                 // keep null - no parseable input
             }
-            page = appUserRepository.findAllByUserId(longFilter, pageable);
+            page = appUserRepository.findAllById(longFilter, pageable);
         } else {
             page = appUserRepository.findAll(pageable);
         }

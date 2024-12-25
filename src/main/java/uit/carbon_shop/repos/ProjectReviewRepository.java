@@ -12,7 +12,7 @@ public interface ProjectReviewRepository extends JpaRepository<ProjectReview, Lo
 
     Page<ProjectReview> findAllById(Long id, Pageable pageable);
 
-    Page<ProjectReview> findByProject_ProjectId(Long projectId, Pageable pageable);
+    Page<ProjectReview> findByProject_Id(Long projectId, Pageable pageable);
 
     ProjectReview findFirstByProject(Project project);
 

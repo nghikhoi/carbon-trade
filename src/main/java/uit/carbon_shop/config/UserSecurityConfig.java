@@ -34,11 +34,13 @@ public class UserSecurityConfig {
 
     @Bean
     public SecurityFilterChain userFilterChain(final HttpSecurity http,
-            final JwtRequestFilter jwtRequestFilter) throws Exception {
+            final JwtRequestFilter jwtRequestFilter,
+            final RequestResponseLogging logging) throws Exception {
         return http.cors(withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilter(logging)
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

@@ -22,6 +22,7 @@ import uit.carbon_shop.util.NotFoundException;
 )
 public interface ProjectMapper {
 
+    @Mapping(source = "id", target = "projectId")
     @Mapping(target = "ownerCompany", ignore = true)
     @Mapping(target = "auditBy", ignore = true)
     ProjectDTO updateProjectDTO(Project project, @MappingTarget ProjectDTO projectDTO);

@@ -22,6 +22,7 @@ import uit.carbon_shop.util.NotFoundException;
 )
 public interface OrderMapper {
 
+    @Mapping(source = "id", target = "orderId")
     @Mapping(target = "project", ignore = true)
     @Mapping(target = "processBy", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
@@ -34,7 +35,7 @@ public interface OrderMapper {
         orderDTO.setCreatedBy(order.getCreatedBy() == null ? null : order.getCreatedBy().getId());
     }
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(source = "orderId", target = "id", ignore = true)
     @Mapping(target = "project", ignore = true)
     @Mapping(target = "processBy", ignore = true)
     @Mapping(target = "createdBy", ignore = true)

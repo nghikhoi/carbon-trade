@@ -49,13 +49,13 @@ public class ChatMessageService {
     }
 
     public Page<UUID> findConversation(long userId, Pageable pageable) {
-        return chatMessageRepository.findDistinctConversationIdBySenderIdOrReceiverIdOrderByCreatedAtDesc(userId, userId, pageable)
+        return chatMessageRepository.findDistinctBySender_IdOrReceiver_Id(userId, userId, pageable)
                 .map(ChatMessageConversationIdProjection::getConversationId);
     }
 
     public Optional<UUID> findConversation(long senderId, long receiverId) {
-        return chatMessageRepository.findBySender_IdAndReceiver_Id(senderId, receiverId)
-                .or(() -> chatMessageRepository.findBySender_IdAndReceiver_Id(receiverId, senderId))
+        return chatMessageRepository.findFirstBySender_IdAndReceiver_Id(senderId, receiverId)
+                .or(() -> chatMessageRepository.findFirstBySender_IdAndReceiver_Id(receiverId, senderId))
                 .map(ChatMessage::getConversationId);
     }
 

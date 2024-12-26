@@ -10,6 +10,4 @@ public interface ChatMessageConversationIdProjection {
 
     UUID getConversationId();
 
-    OffsetDateTime getCreatedAt();
-
 }

@@ -76,7 +76,7 @@ public class UserController {
     @GetMapping("/projects")
     public ResponseEntity<PagedProjectDTO> viewAllProject(
             @RequestParam(name = "filter", required = false) final String filter,
-            @Parameter(hidden = true) @SortDefault(sort = "projectId") @PageableDefault(size = 20) final Pageable pageable
+            @Parameter(hidden = true) @SortDefault(sort = "id") @PageableDefault(size = 20) final Pageable pageable
     ) {
         return ResponseEntity.ok(new PagedProjectDTO(projectService.findAll(filter, pageable)));
     }
@@ -84,7 +84,7 @@ public class UserController {
     @GetMapping("/project/{projectId}/reviews")
     public ResponseEntity<PagedProjectReviewDTO> viewProjectReviews(
             @PathVariable(name = "projectId") final Long projectId,
-            @Parameter(hidden = true) @SortDefault(sort = "projectId") @PageableDefault(size = 20) final Pageable pageable
+            @Parameter(hidden = true) @SortDefault(sort = "id") @PageableDefault(size = 20) final Pageable pageable
     ) {
         return ResponseEntity.ok(new PagedProjectReviewDTO(projectReviewService.findAllByProject(projectId, pageable)));
     }
@@ -92,7 +92,7 @@ public class UserController {
     @GetMapping("/company/{companyId}/reviews")
     public ResponseEntity<PagedCompanyReviewDTO> viewCompanyReviews(
             @PathVariable(name = "companyId") final Long companyId,
-            @Parameter(hidden = true) @SortDefault(sort = "projectId") @PageableDefault(size = 20) final Pageable pageable
+            @Parameter(hidden = true) @SortDefault(sort = "id") @PageableDefault(size = 20) final Pageable pageable
     ) {
         return ResponseEntity.ok(new PagedCompanyReviewDTO(companyReviewService.findAllByCompany(companyId, pageable)));
     }

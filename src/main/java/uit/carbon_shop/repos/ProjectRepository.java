@@ -8,10 +8,9 @@ import uit.carbon_shop.domain.Company;
 import uit.carbon_shop.domain.Project;
 import uit.carbon_shop.model.ProjectStatus;
 
-
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 
-    Page<Project> findAllById(Long projectId, Pageable pageable);
+    Page<Project> findAllById(Long id, Pageable pageable);
 
     Page<Project> findByOwnerCompany_Id(Long id, Pageable pageable);
 

@@ -81,7 +81,7 @@ public class BuyerController {
     public ResponseEntity<PagedProjectDTO> viewAllProject(
             @RequestParam(name = "status", required = false) final ProjectStatus status,
             @RequestParam(name = "filter", required = false) final String filter,
-            @Parameter(hidden = true) @SortDefault(sort = "projectId") @PageableDefault(size = 20) final Pageable pageable) {
+            @Parameter(hidden = true) @SortDefault(sort = "id") @PageableDefault(size = 20) final Pageable pageable) {
         Page<ProjectDTO> page = status == null ? projectService.findAll(filter, pageable)
                 : projectService.findByStatus(status, filter, pageable);
         return ResponseEntity.ok(new PagedProjectDTO(page));
@@ -113,7 +113,7 @@ public class BuyerController {
     public ResponseEntity<PagedOrderDTO> viewAllOrders(
             @RequestParam(name = "status", required = false) OrderStatus status,
             @RequestParam(name = "filter", required = false) final String filter,
-            @Parameter(hidden = true) @SortDefault(sort = "projectId") @PageableDefault(size = 20) final Pageable pageable,
+            @Parameter(hidden = true) @SortDefault(sort = "id") @PageableDefault(size = 20) final Pageable pageable,
             Authentication authentication) {
         Page<OrderDTO> page = status == null ? orderService.findAllCreatedBy(((UserUserDetails) authentication.getPrincipal()).getUserId(), pageable)
                 : orderService.findAllByStatusAndCreatedBy(status, ((UserUserDetails) authentication.getPrincipal()).getUserId(), pageable);

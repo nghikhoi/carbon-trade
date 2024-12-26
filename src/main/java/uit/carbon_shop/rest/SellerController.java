@@ -90,7 +90,7 @@ public class SellerController {
     public ResponseEntity<PagedProjectDTO> viewAllProject(
             @RequestParam(name = "status", required = false) final ProjectStatus status,
             @RequestParam(name = "filter", required = false) final String filter,
-            @Parameter(hidden = true) @SortDefault(sort = "projectId") @PageableDefault(size = 20) final Pageable pageable,
+            @Parameter(hidden = true) @SortDefault(sort = "id") @PageableDefault(size = 20) final Pageable pageable,
             Authentication authentication) {
         long userId = ((UserUserDetails) authentication.getPrincipal()).getUserId();
         AppUserDTO appUser = appUserService.get(userId);
@@ -110,7 +110,7 @@ public class SellerController {
     public ResponseEntity<PagedOrderDTO> viewAllOrders(
             @RequestParam(name = "status", required = false) final OrderStatus status,
             @RequestParam(name = "filter", required = false) final String filter,
-            @Parameter(hidden = true) @SortDefault(sort = "orderId") @PageableDefault(size = 20) final Pageable pageable,
+            @Parameter(hidden = true) @SortDefault(sort = "id") @PageableDefault(size = 20) final Pageable pageable,
             Authentication authentication) {
         long userId = ((UserUserDetails) authentication.getPrincipal()).getUserId();
         AppUserDTO appUser = appUserService.get(userId);

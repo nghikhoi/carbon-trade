@@ -97,7 +97,7 @@ public class MediatorAuditController {
     @GetMapping("/orders")
     public ResponseEntity<PagedOrderDTO> viewAllOrder(
             @RequestParam(name = "status", required = false) OrderStatus status,
-            @Parameter(hidden = true) @SortDefault(sort = "orderId") @PageableDefault(size = 20) final Pageable pageable) {
+            @Parameter(hidden = true) @SortDefault(sort = "id") @PageableDefault(size = 20) final Pageable pageable) {
         Page<OrderDTO> page =
                 status == null ? orderService.findAll(null, pageable) : orderService.findByStatus(status, pageable);
         return ResponseEntity.ok(new PagedOrderDTO(page));
@@ -106,7 +106,7 @@ public class MediatorAuditController {
     @GetMapping("/users/init")
     public ResponseEntity<PagedAppUserDTO> viewAllUser(
             @RequestParam(name = "status", required = false) final UserStatus status,
-            @Parameter(hidden = true) @SortDefault(sort = "userId") @PageableDefault(size = 20) final Pageable pageable) {
+            @Parameter(hidden = true) @SortDefault(sort = "id") @PageableDefault(size = 20) final Pageable pageable) {
         Page<AppUserDTO> page = status == null ? appUserService.findAll(null, pageable)
                 : appUserService.findByStatus(status, pageable);
         return ResponseEntity.ok(new PagedAppUserDTO(page));
@@ -142,7 +142,7 @@ public class MediatorAuditController {
     public ResponseEntity<PagedProjectDTO> viewAllProject(
             @RequestParam(name = "status", required = false) final ProjectStatus status,
             @RequestParam(name = "filter", required = false) final String filter,
-            @Parameter(hidden = true) @SortDefault(sort = "projectId") @PageableDefault(size = 20) final Pageable pageable) {
+            @Parameter(hidden = true) @SortDefault(sort = "id") @PageableDefault(size = 20) final Pageable pageable) {
         Page<ProjectDTO> page = status == null ? projectService.findAll(filter, pageable)
                 : projectService.findByStatus(status, filter, pageable);
         return ResponseEntity.ok(new PagedProjectDTO(page));
@@ -177,7 +177,7 @@ public class MediatorAuditController {
 
     @GetMapping("/questions/init")
     public ResponseEntity<PagedQuestionDTO> viewAllQuestion(
-            @Parameter(hidden = true) @SortDefault(sort = "questionId") @PageableDefault(size = 20) final Pageable pageable) {
+            @Parameter(hidden = true) @SortDefault(sort = "id") @PageableDefault(size = 20) final Pageable pageable) {
         return ResponseEntity.ok(new PagedQuestionDTO(questionService.findByAnswerIsNull(pageable)));
     }
 

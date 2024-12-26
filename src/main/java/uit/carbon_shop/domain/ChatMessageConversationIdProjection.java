@@ -1,5 +1,6 @@
-package uit.carbon_shop.repos;
+package uit.carbon_shop.domain;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
@@ -8,4 +9,7 @@ import java.util.UUID;
 public interface ChatMessageConversationIdProjection {
 
     UUID getConversationId();
+
+    OffsetDateTime getCreatedAt();
+
 }

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import uit.carbon_shop.domain.AppUser;
 import uit.carbon_shop.domain.ChatMessage;
+import uit.carbon_shop.domain.ChatMessageConversationIdProjection;
 
 
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {

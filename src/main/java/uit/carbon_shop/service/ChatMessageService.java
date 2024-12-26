@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import uit.carbon_shop.domain.ChatMessage;
 import uit.carbon_shop.model.ChatMessageDTO;
 import uit.carbon_shop.repos.AppUserRepository;
-import uit.carbon_shop.repos.ChatMessageConversationIdProjection;
+import uit.carbon_shop.domain.ChatMessageConversationIdProjection;
 import uit.carbon_shop.repos.ChatMessageRepository;
 import uit.carbon_shop.util.NotFoundException;
 

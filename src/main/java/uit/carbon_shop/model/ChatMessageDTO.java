@@ -2,6 +2,7 @@ package uit.carbon_shop.model;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +19,7 @@ public class ChatMessageDTO {
     private Long fileId;
 
     @NotNull
-    private Long conversationId;
+    private UUID conversationId;
 
     private Long sender;
 

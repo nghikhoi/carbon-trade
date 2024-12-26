@@ -9,7 +9,7 @@ INSERT INTO chat_messages (
     1800,
     'Eget est lorem.',
     37,
-    34,
+    'a91cba75-dc51-3a61-be0d-612ec0971bc6',
     '2024-09-02 14:30:00',
     '2024-09-02 14:30:00'
 );
@@ -25,7 +25,7 @@ INSERT INTO chat_messages (
     1801,
     'Viverra suspendisse.',
     36,
-    33,
+    'b81cba75-dc51-3a61-be0d-612ec0971bc6',
     '2024-09-03 14:30:00',
     '2024-09-03 14:30:00'
 );

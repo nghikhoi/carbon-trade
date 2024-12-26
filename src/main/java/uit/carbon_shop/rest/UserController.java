@@ -33,7 +33,6 @@ import uit.carbon_shop.model.PagedContactItemDTO;
 import uit.carbon_shop.model.PagedProjectDTO;
 import uit.carbon_shop.model.PagedProjectReviewDTO;
 import uit.carbon_shop.model.PagedQuestionDTO;
-import uit.carbon_shop.model.PagedUUIDDTO;
 import uit.carbon_shop.model.ProjectDTO;
 import uit.carbon_shop.model.QuestionDTO;
 import uit.carbon_shop.model.SendChatMessageDTO;
@@ -83,7 +82,7 @@ public class UserController {
             @RequestParam(name = "answered", required = false) final Boolean answered,
             @Parameter(hidden = true) @PageableDefault(size = 20) final Pageable pageable
     ) {
-        Page<QuestionDTO> page = answered ? questionService.findByAnswerIsNotNull(pageable)
+        Page<QuestionDTO> page = answered != null && answered ? questionService.findByAnswerIsNotNull(pageable)
                 : questionService.findByAnswerIsNull(pageable);
         return ResponseEntity.ok(new PagedQuestionDTO(page));
     }

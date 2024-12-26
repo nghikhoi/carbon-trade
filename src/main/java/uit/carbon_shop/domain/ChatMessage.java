@@ -46,6 +46,9 @@ public class ChatMessage {
     @Column
     private Long fileId;
 
+    @Column(nullable = false)
+    private Long conversationId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")
     private AppUser sender;

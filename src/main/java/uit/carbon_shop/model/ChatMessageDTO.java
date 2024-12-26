@@ -1,5 +1,6 @@
 package uit.carbon_shop.model;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,9 @@ public class ChatMessageDTO {
     private String content;
 
     private Long fileId;
+
+    @NotNull
+    private Long conversationId;
 
     private Long sender;
 

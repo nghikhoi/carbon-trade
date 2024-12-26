@@ -81,6 +81,22 @@ public class ChatMessageResourceTest extends BaseIT {
     }
 
     @Test
+    void createChatMessage_missingField() {
+        RestAssured
+                .given()
+                    .accept(ContentType.JSON)
+                    .contentType(ContentType.JSON)
+                    .body(readResource("/requests/chatMessageDTORequest_missingField.json"))
+                .when()
+                    .post("/api/chatMessages")
+                .then()
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .body("code", Matchers.equalTo("VALIDATION_FAILED"))
+                    .body("fieldErrors.get(0).property", Matchers.equalTo("conversationId"))
+                    .body("fieldErrors.get(0).code", Matchers.equalTo("REQUIRED_NOT_NULL"));
+    }
+
+    @Test
     @Sql("/data/chatMessageData.sql")
     void updateChatMessage_success() {
         RestAssured

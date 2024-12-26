@@ -7,14 +7,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uit.carbon_shop.domain.AppUser;
+import uit.carbon_shop.domain.ChatMessage;
 import uit.carbon_shop.domain.CompanyReview;
 import uit.carbon_shop.domain.Order;
 import uit.carbon_shop.domain.Project;
 import uit.carbon_shop.domain.ProjectReview;
 import uit.carbon_shop.domain.Question;
 import uit.carbon_shop.model.AppUserDTO;
-import uit.carbon_shop.model.UserStatus;
 import uit.carbon_shop.repos.AppUserRepository;
+import uit.carbon_shop.repos.ChatMessageRepository;
 import uit.carbon_shop.repos.CompanyRepository;
 import uit.carbon_shop.repos.CompanyReviewRepository;
 import uit.carbon_shop.repos.OrderRepository;
@@ -38,6 +39,7 @@ public class AppUserService {
     private final CompanyReviewRepository companyReviewRepository;
     private final ProjectReviewRepository projectReviewRepository;
     private final QuestionRepository questionRepository;
+    private final ChatMessageRepository chatMessageRepository;
 
     public AppUserService(final AppUserRepository appUserRepository,
             final CompanyRepository companyRepository, final ProjectRepository projectRepository,
@@ -45,7 +47,8 @@ public class AppUserService {
             final OrderRepository orderRepository,
             final CompanyReviewRepository companyReviewRepository,
             final ProjectReviewRepository projectReviewRepository,
-            final QuestionRepository questionRepository) {
+            final QuestionRepository questionRepository,
+            final ChatMessageRepository chatMessageRepository) {
         this.appUserRepository = appUserRepository;
         this.companyRepository = companyRepository;
         this.projectRepository = projectRepository;
@@ -55,6 +58,7 @@ public class AppUserService {
         this.companyReviewRepository = companyReviewRepository;
         this.projectReviewRepository = projectReviewRepository;
         this.questionRepository = questionRepository;
+        this.chatMessageRepository = chatMessageRepository;
     }
 
     public Page<AppUserDTO> findAll(final String filter, final Pageable pageable) {
@@ -77,52 +81,36 @@ public class AppUserService {
                 pageable, page.getTotalElements());
     }
 
-    public AppUserDTO findByCompany(final Long companyId) {
-        return appUserRepository.findByCompany_Id(companyId)
-                .map(appUser -> appUserMapper.updateAppUserDTO(appUser, new AppUserDTO()))
-                .orElseThrow(NotFoundException::new);
-    }
-
-    public Page<AppUserDTO> findByStatus(UserStatus status, final Pageable pageable) {
-        final Page<AppUser> page = appUserRepository.findByStatus(status, pageable);
-        return new PageImpl<>(page.getContent()
-                .stream()
-                .map(appUser -> appUserMapper.updateAppUserDTO(appUser, new AppUserDTO()))
-                .toList(),
-                pageable, page.getTotalElements());
-    }
-
-    public AppUserDTO get(final Long userId) {
-        return appUserRepository.findById(userId)
+    public AppUserDTO get(final Long id) {
+        return appUserRepository.findById(id)
                 .map(appUser -> appUserMapper.updateAppUserDTO(appUser, new AppUserDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     public Long create(final AppUserDTO appUserDTO) {
         final AppUser appUser = new AppUser();
-        appUser.setId(appUserDTO.getUserId());
         appUserMapper.updateAppUser(appUserDTO, appUser, companyRepository, projectRepository, passwordEncoder);
         return appUserRepository.save(appUser).getId();
     }
 
-    public void update(final Long userId, final AppUserDTO appUserDTO) {
-        final AppUser appUser = appUserRepository.findById(userId)
+    public void update(final Long id, final AppUserDTO appUserDTO) {
+        final AppUser appUser = appUserRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         appUserMapper.updateAppUser(appUserDTO, appUser, companyRepository, projectRepository, passwordEncoder);
         appUserRepository.save(appUser);
     }
 
-    public void delete(final Long userId) {
-        appUserRepository.deleteById(userId);
+    public void delete(final Long id) {
+        appUserRepository.deleteById(id);
     }
 
     public boolean companyExists(final Long id) {
         return appUserRepository.existsByCompanyId(id);
     }
 
-    public ReferencedWarning getReferencedWarning(final Long userId) {
+    public ReferencedWarning getReferencedWarning(final Long id) {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
-        final AppUser appUser = appUserRepository.findById(userId)
+        final AppUser appUser = appUserRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         final Project auditByProject = projectRepository.findFirstByAuditBy(appUser);
         if (auditByProject != null) {
@@ -158,6 +146,18 @@ public class AppUserService {
         if (askedByQuestion != null) {
             referencedWarning.setKey("appUser.question.askedBy.referenced");
             referencedWarning.addParam(askedByQuestion.getId());
+            return referencedWarning;
+        }
+        final ChatMessage senderChatMessage = chatMessageRepository.findFirstBySender(appUser);
+        if (senderChatMessage != null) {
+            referencedWarning.setKey("appUser.chatMessage.sender.referenced");
+            referencedWarning.addParam(senderChatMessage.getId());
+            return referencedWarning;
+        }
+        final ChatMessage receiverChatMessage = chatMessageRepository.findFirstByReceiver(appUser);
+        if (receiverChatMessage != null) {
+            referencedWarning.setKey("appUser.chatMessage.receiver.referenced");
+            referencedWarning.addParam(receiverChatMessage.getId());
             return referencedWarning;
         }
         return null;

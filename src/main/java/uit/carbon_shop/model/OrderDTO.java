@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 public class OrderDTO {
 
-    private Long orderId;
+    private Long id;
 
     private Long creditAmount;
 

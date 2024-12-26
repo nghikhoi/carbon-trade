@@ -26,7 +26,6 @@ import uit.carbon_shop.util.NotFoundException;
 )
 public interface AppUserMapper {
 
-    @Mapping(source = "id", target = "userId")
     @Mapping(target = "company", ignore = true)
     @Mapping(target = "favoriteProjects", ignore = true)
     @Mapping(target = "password", ignore = true)

@@ -45,15 +45,6 @@ public class QuestionService {
                 pageable, page.getTotalElements());
     }
 
-    public Page<QuestionDTO> findByAnswerIsNull(final Pageable pageable) {
-        final Page<Question> page = questionRepository.findByAnswerNull(pageable);
-        return new PageImpl<>(page.getContent()
-                .stream()
-                .map(question -> questionMapper.updateQuestionDTO(question, new QuestionDTO()))
-                .toList(),
-                pageable, page.getTotalElements());
-    }
-
     public QuestionDTO get(final Long id) {
         return questionRepository.findById(id)
                 .map(question -> questionMapper.updateQuestionDTO(question, new QuestionDTO()))
@@ -62,7 +53,6 @@ public class QuestionService {
 
     public Long create(final QuestionDTO questionDTO) {
         final Question question = new Question();
-        question.setId(questionDTO.getId());
         questionMapper.updateQuestion(questionDTO, question, appUserRepository);
         return questionRepository.save(question).getId();
     }

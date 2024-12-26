@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import uit.carbon_shop.domain.AppUser;
-import uit.carbon_shop.model.UserStatus;
 import uit.carbon_shop.model.UserUserDetails;
 import uit.carbon_shop.repos.AppUserRepository;
 
@@ -28,10 +27,6 @@ public class UserUserDetailsService implements UserDetailsService {
         if (appUser == null) {
             log.warn("user not found: {}", username);
             throw new UsernameNotFoundException("User " + username + " not found");
-        }
-        if (appUser.getStatus() != UserStatus.APPROVED) {
-            log.warn("user not approved: {}", username);
-            throw new UsernameNotFoundException("User " + username + " not approved");
         }
         final List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(appUser.getRole().name()));
         return new UserUserDetails(appUser.getId(), username, appUser.getPassword(), authorities);

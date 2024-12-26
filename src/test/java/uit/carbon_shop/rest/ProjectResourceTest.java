@@ -24,7 +24,7 @@ public class ProjectResourceTest extends BaseIT {
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(2))
-                    .body("content.get(0).projectId", Matchers.equalTo(1000));
+                    .body("content.get(0).id", Matchers.equalTo(1000));
     }
 
     @Test
@@ -38,7 +38,7 @@ public class ProjectResourceTest extends BaseIT {
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(1))
-                    .body("content.get(0).projectId", Matchers.equalTo(1001));
+                    .body("content.get(0).id", Matchers.equalTo(1001));
     }
 
     @Test

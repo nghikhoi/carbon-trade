@@ -12,12 +12,12 @@ import org.springframework.security.core.userdetails.User;
 @Getter
 public class UserUserDetails extends User {
 
-    private final Long userId;
+    private final Long id;
 
-    public UserUserDetails(final Long userId, final String username, final String hash,
+    public UserUserDetails(final Long id, final String username, final String hash,
             final Collection<? extends GrantedAuthority> authorities) {
         super(username, hash, authorities);
-        this.userId = userId;
+        this.id = id;
     }
 
 }

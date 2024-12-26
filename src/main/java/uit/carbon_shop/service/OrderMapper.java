@@ -22,7 +22,6 @@ import uit.carbon_shop.util.NotFoundException;
 )
 public interface OrderMapper {
 
-    @Mapping(source = "id", target = "orderId")
     @Mapping(target = "project", ignore = true)
     @Mapping(target = "processBy", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
@@ -35,17 +34,19 @@ public interface OrderMapper {
         orderDTO.setCreatedBy(order.getCreatedBy() == null ? null : order.getCreatedBy().getId());
     }
 
-    @Mapping(source = "orderId", target = "id", ignore = true)
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "project", ignore = true)
     @Mapping(target = "processBy", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     Order updateOrder(OrderDTO orderDTO, @MappingTarget Order order,
             @Context ProjectRepository projectRepository,
+            @Context AppUserRepository appUserRepository,
             @Context AppUserRepository appUserRepository);
 
     @AfterMapping
     default void afterUpdateOrder(OrderDTO orderDTO, @MappingTarget Order order,
             @Context ProjectRepository projectRepository,
+            @Context AppUserRepository appUserRepository,
             @Context AppUserRepository appUserRepository) {
         final Project project = orderDTO.getProject() == null ? null : projectRepository.findById(orderDTO.getProject())
                 .orElseThrow(() -> new NotFoundException("project not found"));

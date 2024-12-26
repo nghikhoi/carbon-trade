@@ -5,12 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import uit.carbon_shop.domain.Order;
 import uit.carbon_shop.domain.Project;
 import uit.carbon_shop.domain.ProjectReview;
 import uit.carbon_shop.model.ProjectDTO;
-import uit.carbon_shop.model.ProjectStatus;
 import uit.carbon_shop.repos.AppUserRepository;
 import uit.carbon_shop.repos.CompanyRepository;
 import uit.carbon_shop.repos.OrderRepository;
@@ -63,63 +61,27 @@ public class ProjectService {
                 pageable, page.getTotalElements());
     }
 
-    public Page<ProjectDTO> findAllByOwner(final Long ownerCompany, String filter, final Pageable pageable) {
-        final Page<Project> page =
-                StringUtils.hasText(filter) ? projectRepository.findByOwnerCompany_IdAndNameContainsIgnoreCase(
-                        ownerCompany, filter, pageable)
-                        : projectRepository.findByOwnerCompany_Id(ownerCompany, pageable);
-        return new PageImpl<>(page.getContent()
-                .stream()
-                .map(project -> projectMapper.updateProjectDTO(project, new ProjectDTO()))
-                .toList(),
-                pageable, page.getTotalElements());
-    }
-
-    public Page<ProjectDTO> findAllByOwnerAndStatus(final Long ownerCompany, ProjectStatus status, String filter, final Pageable pageable) {
-        final Page<Project> page =
-                StringUtils.hasText(filter) ? projectRepository.findByOwnerCompany_IdAndStatusAndNameContainsIgnoreCase(
-                        ownerCompany, status, filter, pageable)
-                        : projectRepository.findByOwnerCompany_IdAndStatus(ownerCompany, status, pageable);
-        return new PageImpl<>(page.getContent()
-                .stream()
-                .map(project -> projectMapper.updateProjectDTO(project, new ProjectDTO()))
-                .toList(),
-                pageable, page.getTotalElements());
-    }
-
-    public Page<ProjectDTO> findByStatus(ProjectStatus status, String filter, Pageable pageable) {
-        final Page<Project> page = StringUtils.hasText(filter) ? projectRepository.findByStatusAndNameContainsIgnoreCase(
-                status, filter, pageable)
-                : projectRepository.findByStatus(status, pageable);
-        return new PageImpl<>(page.getContent()
-                .stream()
-                .map(project -> projectMapper.updateProjectDTO(project, new ProjectDTO()))
-                .toList(),
-                pageable, page.getTotalElements());
-    }
-
-    public ProjectDTO get(final Long projectId) {
-        return projectRepository.findById(projectId)
+    public ProjectDTO get(final Long id) {
+        return projectRepository.findById(id)
                 .map(project -> projectMapper.updateProjectDTO(project, new ProjectDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     public Long create(final ProjectDTO projectDTO) {
         final Project project = new Project();
-        project.setId(projectDTO.getProjectId());
         projectMapper.updateProject(projectDTO, project, companyRepository, appUserRepository);
         return projectRepository.save(project).getId();
     }
 
-    public void update(final Long projectId, final ProjectDTO projectDTO) {
-        final Project project = projectRepository.findById(projectId)
+    public void update(final Long id, final ProjectDTO projectDTO) {
+        final Project project = projectRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         projectMapper.updateProject(projectDTO, project, companyRepository, appUserRepository);
         projectRepository.save(project);
     }
 
-    public void delete(final Long projectId) {
-        final Project project = projectRepository.findById(projectId)
+    public void delete(final Long id) {
+        final Project project = projectRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         // remove many-to-many relations at owning side
         appUserRepository.findAllByFavoriteProjects(project)
@@ -127,9 +89,9 @@ public class ProjectService {
         projectRepository.delete(project);
     }
 
-    public ReferencedWarning getReferencedWarning(final Long projectId) {
+    public ReferencedWarning getReferencedWarning(final Long id) {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
-        final Project project = projectRepository.findById(projectId)
+        final Project project = projectRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         final Order projectOrder = orderRepository.findFirstByProject(project);
         if (projectOrder != null) {

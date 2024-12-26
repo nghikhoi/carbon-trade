@@ -13,6 +13,4 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     Question findFirstByAskedBy(AppUser appUser);
 
-    Page<Question> findByAnswerNull(Pageable pageable);
-
 }

@@ -22,7 +22,7 @@ public class AppUserResourceTest extends BaseIT {
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(2))
-                    .body("content.get(0).userId", Matchers.equalTo(1300));
+                    .body("content.get(0).id", Matchers.equalTo(1300));
     }
 
     @Test
@@ -35,7 +35,7 @@ public class AppUserResourceTest extends BaseIT {
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(1))
-                    .body("content.get(0).userId", Matchers.equalTo(1301));
+                    .body("content.get(0).id", Matchers.equalTo(1301));
     }
 
     @Test

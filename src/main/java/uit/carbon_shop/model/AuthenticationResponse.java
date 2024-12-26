@@ -9,6 +9,5 @@ import lombok.Setter;
 public class AuthenticationResponse {
 
     private String accessToken;
-    private AppUserDTO user;
 
 }

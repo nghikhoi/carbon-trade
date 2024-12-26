@@ -1,5 +1,5 @@
 INSERT INTO projects (
-    project_id,
+    id,
     name,
     address,
     size,
@@ -37,7 +37,7 @@ INSERT INTO projects (
 );
 
 INSERT INTO projects (
-    project_id,
+    id,
     name,
     address,
     size,

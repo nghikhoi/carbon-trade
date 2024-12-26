@@ -1,5 +1,5 @@
 INSERT INTO orders (
-    order_id,
+    id,
     credit_amount,
     unit,
     price,
@@ -25,7 +25,7 @@ INSERT INTO orders (
 );
 
 INSERT INTO orders (
-    order_id,
+    id,
     credit_amount,
     unit,
     price,

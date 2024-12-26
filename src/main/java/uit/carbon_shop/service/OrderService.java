@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uit.carbon_shop.domain.Order;
 import uit.carbon_shop.model.OrderDTO;
-import uit.carbon_shop.model.OrderStatus;
 import uit.carbon_shop.repos.AppUserRepository;
 import uit.carbon_shop.repos.OrderRepository;
 import uit.carbon_shop.repos.ProjectRepository;
@@ -50,73 +49,27 @@ public class OrderService {
                 pageable, page.getTotalElements());
     }
 
-    public Page<OrderDTO> findAllCreatedBy(final Long userId, final Pageable pageable) {
-        final Page<Order> page = orderRepository.findByCreatedBy_Id(userId, pageable);
-        return new PageImpl<>(page.getContent()
-                .stream()
-                .map(order -> orderMapper.updateOrderDTO(order, new OrderDTO()))
-                .toList(),
-                pageable, page.getTotalElements());
-    }
-
-    public Page<OrderDTO> findAllByStatusAndCreatedBy(final OrderStatus status, final Long userId, final Pageable pageable) {
-        final Page<Order> page = orderRepository.findByCreatedBy_IdAndStatus(userId, status, pageable);
-        return new PageImpl<>(page.getContent()
-                .stream()
-                .map(order -> orderMapper.updateOrderDTO(order, new OrderDTO()))
-                .toList(),
-                pageable, page.getTotalElements());
-    }
-
-    public Page<OrderDTO> findByOwnerCompany(final Long companyId, final Pageable pageable) {
-        final Page<Order> page = orderRepository.findByProject_OwnerCompany_Id(companyId, pageable);
-        return new PageImpl<>(page.getContent()
-                .stream()
-                .map(order -> orderMapper.updateOrderDTO(order, new OrderDTO()))
-                .toList(),
-                pageable, page.getTotalElements());
-    }
-
-    public Page<OrderDTO> findByStatusAndOwnerCompany(final OrderStatus status, final Long companyId, final Pageable pageable) {
-        final Page<Order> page = orderRepository.findByProject_OwnerCompany_IdAndStatus(companyId, status, pageable);
-        return new PageImpl<>(page.getContent()
-                .stream()
-                .map(order -> orderMapper.updateOrderDTO(order, new OrderDTO()))
-                .toList(),
-                pageable, page.getTotalElements());
-    }
-
-    public Page<OrderDTO> findByStatus(OrderStatus status, Pageable pageable) {
-        final Page<Order> page = orderRepository.findByStatus(status, pageable);
-        return new PageImpl<>(page.getContent()
-                .stream()
-                .map(order -> orderMapper.updateOrderDTO(order, new OrderDTO()))
-                .toList(),
-                pageable, page.getTotalElements());
-    }
-
-    public OrderDTO get(final Long orderId) {
-        return orderRepository.findById(orderId)
+    public OrderDTO get(final Long id) {
+        return orderRepository.findById(id)
                 .map(order -> orderMapper.updateOrderDTO(order, new OrderDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     public Long create(final OrderDTO orderDTO) {
         final Order order = new Order();
-        order.setId(orderDTO.getOrderId());
-        orderMapper.updateOrder(orderDTO, order, projectRepository, appUserRepository);
+        orderMapper.updateOrder(orderDTO, order, projectRepository, appUserRepository, appUserRepository);
         return orderRepository.save(order).getId();
     }
 
-    public void update(final Long orderId, final OrderDTO orderDTO) {
-        final Order order = orderRepository.findById(orderId)
+    public void update(final Long id, final OrderDTO orderDTO) {
+        final Order order = orderRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        orderMapper.updateOrder(orderDTO, order, projectRepository, appUserRepository);
+        orderMapper.updateOrder(orderDTO, order, projectRepository, appUserRepository, appUserRepository);
         orderRepository.save(order);
     }
 
-    public void delete(final Long orderId) {
-        orderRepository.deleteById(orderId);
+    public void delete(final Long id) {
+        orderRepository.deleteById(id);
     }
 
 }

@@ -24,7 +24,7 @@ public class OrderResourceTest extends BaseIT {
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(2))
-                    .body("content.get(0).orderId", Matchers.equalTo(1100));
+                    .body("content.get(0).id", Matchers.equalTo(1100));
     }
 
     @Test
@@ -38,7 +38,7 @@ public class OrderResourceTest extends BaseIT {
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(1))
-                    .body("content.get(0).orderId", Matchers.equalTo(1101));
+                    .body("content.get(0).id", Matchers.equalTo(1101));
     }
 
     @Test

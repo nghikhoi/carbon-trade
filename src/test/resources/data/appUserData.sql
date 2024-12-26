@@ -1,5 +1,5 @@
 INSERT INTO app_users (
-    user_id,
+    id,
     password,
     name,
     phone,
@@ -25,7 +25,7 @@ INSERT INTO app_users (
 );
 
 INSERT INTO app_users (
-    user_id,
+    id,
     password,
     name,
     phone,

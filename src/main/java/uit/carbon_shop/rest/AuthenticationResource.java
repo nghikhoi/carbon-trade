@@ -1,7 +1,6 @@
 package uit.carbon_shop.rest;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,19 +12,24 @@ import org.springframework.web.server.ResponseStatusException;
 import uit.carbon_shop.model.AuthenticationRequest;
 import uit.carbon_shop.model.AuthenticationResponse;
 import uit.carbon_shop.model.UserUserDetails;
-import uit.carbon_shop.service.AppUserService;
 import uit.carbon_shop.service.UserTokenService;
 import uit.carbon_shop.service.UserUserDetailsService;
 
 
 @RestController
-@RequiredArgsConstructor
 public class AuthenticationResource {
 
     private final AuthenticationManager authenticationManager;
     private final UserUserDetailsService userUserDetailsService;
     private final UserTokenService userTokenService;
-    private final AppUserService appUserService;
+
+    public AuthenticationResource(final AuthenticationManager authenticationManager,
+            final UserUserDetailsService userUserDetailsService,
+            final UserTokenService userTokenService) {
+        this.authenticationManager = authenticationManager;
+        this.userUserDetailsService = userUserDetailsService;
+        this.userTokenService = userTokenService;
+    }
 
     @PostMapping("/authenticate")
     public AuthenticationResponse authenticate(
@@ -40,7 +44,6 @@ public class AuthenticationResource {
         final UserUserDetails userDetails = userUserDetailsService.loadUserByUsername(authenticationRequest.getEmail());
         final AuthenticationResponse authenticationResponse = new AuthenticationResponse();
         authenticationResponse.setAccessToken(userTokenService.generateToken(userDetails));
-        authenticationResponse.setUser(appUserService.get(userDetails.getUserId()));
         return authenticationResponse;
     }
 

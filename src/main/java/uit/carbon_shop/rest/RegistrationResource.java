@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import uit.carbon_shop.model.RegistrationRequest;
-import uit.carbon_shop.model.UserRegistrationRequest;
 import uit.carbon_shop.service.RegistrationService;
 
 
@@ -21,15 +20,8 @@ public class RegistrationResource {
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(
-            @RequestBody @Valid final UserRegistrationRequest registrationRequest) {
-        registrationService.register(registrationRequest);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/register/mediator")
-    public ResponseEntity<Void> registerMediator(
             @RequestBody @Valid final RegistrationRequest registrationRequest) {
-        registrationService.registerMediator(registrationRequest);
+        registrationService.register(registrationRequest);
         return ResponseEntity.ok().build();
     }
 

@@ -22,6 +22,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import uit.carbon_shop.CarbonShopApplication;
 import uit.carbon_shop.repos.AppUserRepository;
+import uit.carbon_shop.repos.ChatMessageRepository;
 import uit.carbon_shop.repos.CompanyRepository;
 import uit.carbon_shop.repos.CompanyReviewRepository;
 import uit.carbon_shop.repos.FileDocumentRepository;
@@ -90,6 +91,9 @@ public abstract class BaseIT {
 
     @Autowired
     public QuestionRepository questionRepository;
+
+    @Autowired
+    public ChatMessageRepository chatMessageRepository;
 
     @PostConstruct
     public void initRestAssured() {

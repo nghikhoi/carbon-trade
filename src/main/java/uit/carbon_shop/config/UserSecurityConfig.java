@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,7 +22,7 @@ public class UserSecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         // creates hashes with {bcrypt} prefix
-        return new BCryptPasswordEncoder();
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean
@@ -34,14 +33,12 @@ public class UserSecurityConfig {
 
     @Bean
     public SecurityFilterChain userFilterChain(final HttpSecurity http,
-            final JwtRequestFilter jwtRequestFilter,
-            final RequestResponseLogging logging) throws Exception {
+            final JwtRequestFilter jwtRequestFilter) throws Exception {
         return http.cors(withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(logging, JwtRequestFilter.class)
                 .build();
     }
 

@@ -15,3 +15,5 @@ DELETE FROM company_reviews;
 DELETE FROM project_reviews;
 
 DELETE FROM questions;
+
+DELETE FROM chat_messages;

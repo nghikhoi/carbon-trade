@@ -19,6 +19,12 @@ public class ChatMessageDTO {
 
     private Long fileId;
 
+    private Long imageId;
+
+    private Long videoId;
+
+    private Long audioId;
+
     @NotNull
     private UUID conversationId;
 

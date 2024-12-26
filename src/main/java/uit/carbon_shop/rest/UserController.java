@@ -176,6 +176,9 @@ public class UserController {
         chatMessage.setId(idGeneratorService.generateId());
         chatMessage.setContent(sendChatMessageDTO.getContent());
         chatMessage.setFileId(sendChatMessageDTO.getFileId());
+        chatMessage.setImageId(sendChatMessageDTO.getImageId());
+        chatMessage.setVideoId(sendChatMessageDTO.getVideoId());
+        chatMessage.setAudioId(sendChatMessageDTO.getAudioId());
         chatMessage.setConversationId(conversationId);
         chatMessage.setSender(userId);
         chatMessage.setReceiver(sendChatMessageDTO.getReceiver());

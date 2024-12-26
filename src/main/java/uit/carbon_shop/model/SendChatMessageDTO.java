@@ -14,6 +14,12 @@ public class SendChatMessageDTO {
 
     private Long fileId;
 
+    private Long imageId;
+
+    private Long videoId;
+
+    private Long audioId;
+
     private Long receiver;
 
 }

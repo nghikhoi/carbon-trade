@@ -37,6 +37,15 @@ public class ChatMessage {
     @Column
     private Long fileId;
 
+    @Column
+    private Long imageId;
+
+    @Column
+    private Long videoId;
+
+    @Column
+    private Long audioId;
+
     @Column(nullable = false)
     private UUID conversationId;
 

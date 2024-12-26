@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.Getter;
@@ -58,6 +59,15 @@ public class Order {
     @Column(columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
     private List<Long> certImages;
+
+    @Column
+    private LocalDateTime contractSignDate;
+
+    @Column
+    private LocalDateTime payDate;
+
+    @Column
+    private LocalDateTime deliveryDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")

@@ -84,6 +84,9 @@ public class MediatorAuditController {
         order.setContractFile(mediatorDoneOrderDTO.getContractFile());
         order.setCertImages(mediatorDoneOrderDTO.getCertImages());
         order.setPaymentBillFile(mediatorDoneOrderDTO.getPaymentBillFile());
+        order.setPayDate(mediatorDoneOrderDTO.getPayDate());
+        order.setDeliveryDate(mediatorDoneOrderDTO.getDeliveryDate());
+        order.setContractSignDate(mediatorDoneOrderDTO.getContractSignDate());
         orderService.update(orderId, order);
         return ResponseEntity.ok(order);
     }

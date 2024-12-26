@@ -15,4 +15,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     Page<Question> findByAnswerNull(Pageable pageable);
 
+    Page<Question> findByAnswerNotNull(Pageable pageable);
+
 }

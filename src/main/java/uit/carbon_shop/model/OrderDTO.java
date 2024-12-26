@@ -1,6 +1,7 @@
 package uit.carbon_shop.model;
 
 import jakarta.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,5 +37,11 @@ public class OrderDTO {
     private Long processBy;
 
     private Long createdBy;
+
+    private LocalDateTime contractSignDate;
+
+    private LocalDateTime payDate;
+
+    private LocalDateTime deliveryDate;
 
 }

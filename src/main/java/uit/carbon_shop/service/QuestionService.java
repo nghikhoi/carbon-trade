@@ -54,6 +54,15 @@ public class QuestionService {
                 pageable, page.getTotalElements());
     }
 
+    public Page<QuestionDTO> findByAnswerIsNotNull(final Pageable pageable) {
+        final Page<Question> page = questionRepository.findByAnswerNotNull(pageable);
+        return new PageImpl<>(page.getContent()
+                .stream()
+                .map(question -> questionMapper.updateQuestionDTO(question, new QuestionDTO()))
+                .toList(),
+                pageable, page.getTotalElements());
+    }
+
     public QuestionDTO get(final Long id) {
         return questionRepository.findById(id)
                 .map(question -> questionMapper.updateQuestionDTO(question, new QuestionDTO()))

@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
@@ -77,10 +78,12 @@ public class UserController {
 
     @GetMapping("/questions")
     public ResponseEntity<PagedQuestionDTO> viewQuestions(
-            @RequestParam(name = "filter", required = false) final String filter,
+            @RequestParam(name = "answered", required = false) final Boolean answered,
             @Parameter(hidden = true) @PageableDefault(size = 20) final Pageable pageable
     ) {
-        return ResponseEntity.ok(new PagedQuestionDTO(questionService.findAll(filter, pageable)));
+        Page<QuestionDTO> page = answered ? questionService.findByAnswerIsNotNull(pageable)
+                : questionService.findByAnswerIsNull(pageable);
+        return ResponseEntity.ok(new PagedQuestionDTO(page));
     }
 
     @GetMapping("/projects")

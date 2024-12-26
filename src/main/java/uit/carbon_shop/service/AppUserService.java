@@ -33,30 +33,29 @@ public class AppUserService {
     private final AppUserRepository appUserRepository;
     private final CompanyRepository companyRepository;
     private final ProjectRepository projectRepository;
+    private final CompanyReviewRepository companyReviewRepository;
+    private final ProjectReviewRepository projectReviewRepository;
     private final PasswordEncoder passwordEncoder;
     private final AppUserMapper appUserMapper;
     private final OrderRepository orderRepository;
-    private final CompanyReviewRepository companyReviewRepository;
-    private final ProjectReviewRepository projectReviewRepository;
     private final QuestionRepository questionRepository;
     private final ChatMessageRepository chatMessageRepository;
 
     public AppUserService(final AppUserRepository appUserRepository,
             final CompanyRepository companyRepository, final ProjectRepository projectRepository,
-            final PasswordEncoder passwordEncoder, final AppUserMapper appUserMapper,
-            final OrderRepository orderRepository,
             final CompanyReviewRepository companyReviewRepository,
             final ProjectReviewRepository projectReviewRepository,
-            final QuestionRepository questionRepository,
+            final PasswordEncoder passwordEncoder, final AppUserMapper appUserMapper,
+            final OrderRepository orderRepository, final QuestionRepository questionRepository,
             final ChatMessageRepository chatMessageRepository) {
         this.appUserRepository = appUserRepository;
         this.companyRepository = companyRepository;
         this.projectRepository = projectRepository;
+        this.companyReviewRepository = companyReviewRepository;
+        this.projectReviewRepository = projectReviewRepository;
         this.passwordEncoder = passwordEncoder;
         this.appUserMapper = appUserMapper;
         this.orderRepository = orderRepository;
-        this.companyReviewRepository = companyReviewRepository;
-        this.projectReviewRepository = projectReviewRepository;
         this.questionRepository = questionRepository;
         this.chatMessageRepository = chatMessageRepository;
     }
@@ -89,14 +88,14 @@ public class AppUserService {
 
     public Long create(final AppUserDTO appUserDTO) {
         final AppUser appUser = new AppUser();
-        appUserMapper.updateAppUser(appUserDTO, appUser, companyRepository, projectRepository, passwordEncoder);
+        appUserMapper.updateAppUser(appUserDTO, appUser, companyRepository, projectRepository, companyReviewRepository, projectReviewRepository, passwordEncoder);
         return appUserRepository.save(appUser).getId();
     }
 
     public void update(final Long id, final AppUserDTO appUserDTO) {
         final AppUser appUser = appUserRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        appUserMapper.updateAppUser(appUserDTO, appUser, companyRepository, projectRepository, passwordEncoder);
+        appUserMapper.updateAppUser(appUserDTO, appUser, companyRepository, projectRepository, companyReviewRepository, projectReviewRepository, passwordEncoder);
         appUserRepository.save(appUser);
     }
 

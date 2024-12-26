@@ -54,6 +54,9 @@ public class AppUser {
     @Column
     private String email;
 
+    @Column
+    private Long avatar;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole role;

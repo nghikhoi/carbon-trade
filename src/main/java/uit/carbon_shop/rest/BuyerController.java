@@ -33,6 +33,7 @@ import uit.carbon_shop.model.ProjectReviewDTO;
 import uit.carbon_shop.model.ProjectStatus;
 import uit.carbon_shop.model.UserRole;
 import uit.carbon_shop.model.UserUserDetails;
+import uit.carbon_shop.service.AppUserService;
 import uit.carbon_shop.service.CompanyReviewService;
 import uit.carbon_shop.service.CompanyService;
 import uit.carbon_shop.service.IdGeneratorService;
@@ -54,6 +55,7 @@ public class BuyerController {
     private final CompanyReviewService companyReviewService;
     private final CompanyService companyService;
     private final IdGeneratorService idGeneratorService;
+    private final AppUserService appUserService;
 
     @GetMapping("/project/{projectId}")
     public ResponseEntity<ProjectDTO> viewProject(
@@ -81,9 +83,12 @@ public class BuyerController {
     public ResponseEntity<PagedProjectDTO> viewAllProject(
             @RequestParam(name = "status", required = false) final ProjectStatus status,
             @RequestParam(name = "filter", required = false) final String filter,
-            @Parameter(hidden = true) @SortDefault(sort = "id") @PageableDefault(size = 20) final Pageable pageable) {
-        Page<ProjectDTO> page = status == null ? projectService.findAll(filter, pageable)
-                : projectService.findByStatus(status, filter, pageable);
+            @Parameter(hidden = true) @SortDefault(sort = "id") @PageableDefault(size = 20) final Pageable pageable,
+            Authentication authentication) {
+        var userId = ((UserUserDetails) authentication.getPrincipal()).getUserId();
+        var appUser = appUserService.get(userId);
+        Page<ProjectDTO> page = status == null ? projectService.findAllButNotCompany(appUser.getCompany(), filter, pageable)
+                : projectService.findByStatusButNotCompany(status, appUser.getCompany(), filter, pageable);
         return ResponseEntity.ok(new PagedProjectDTO(page));
     }
 

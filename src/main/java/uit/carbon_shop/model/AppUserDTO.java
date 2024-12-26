@@ -40,6 +40,8 @@ public class AppUserDTO {
     @Email(regexp = WebUtils.EMAIL_PATTERN)
     private String email;
 
+    private Long avatar;
+
     @NotNull
     private UserRole role;
 

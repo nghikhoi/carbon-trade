@@ -18,6 +18,8 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
 
     Page<ChatMessage> findByConversationIdOrderByCreatedAtDesc(UUID conversationId, Pageable pageable);
 
+    Optional<ChatMessage> findFirstByConversationIdOrderByCreatedAtDesc(UUID conversationId);
+
     Optional<ChatMessage> findBySender_IdAndReceiver_Id(Long id, Long id1);
 
     ChatMessage findFirstBySender(AppUser appUser);

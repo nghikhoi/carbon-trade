@@ -25,9 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 import uit.carbon_shop.model.AppUserDTO;
 import uit.carbon_shop.model.ChatMessageDTO;
 import uit.carbon_shop.model.CompanyDTO;
+import uit.carbon_shop.model.ContactItemDTO;
 import uit.carbon_shop.model.LikeResultDTO;
 import uit.carbon_shop.model.PagedChatMessageDTO;
 import uit.carbon_shop.model.PagedCompanyReviewDTO;
+import uit.carbon_shop.model.PagedContactItemDTO;
 import uit.carbon_shop.model.PagedProjectDTO;
 import uit.carbon_shop.model.PagedProjectReviewDTO;
 import uit.carbon_shop.model.PagedQuestionDTO;
@@ -135,10 +137,26 @@ public class UserController {
     }
 
     @GetMapping("/chat/conversations")
-    public ResponseEntity<PagedUUIDDTO> getConversations(Authentication authentication,
+    public ResponseEntity<PagedContactItemDTO> getConversations(Authentication authentication,
             @Parameter(hidden = true) @PageableDefault(size = 20) final Pageable pageable) {
         var userId = ((UserUserDetails) authentication.getPrincipal()).getUserId();
-        return ResponseEntity.ok(new PagedUUIDDTO(chatMessageService.findConversation(userId, pageable)));
+        return ResponseEntity.ok(new PagedContactItemDTO(
+                chatMessageService.findConversation(userId, pageable)
+                        .map(conversationId -> {
+                            var contactItem = new ContactItemDTO();
+                            var latestMessage = chatMessageService.getLatestMessage(conversationId);
+                            contactItem.setConversationId(conversationId);
+                            contactItem.setChatUserId(latestMessage.getReceiver().equals(userId) ? latestMessage.getSender()
+                                    : latestMessage.getReceiver());
+                            contactItem.setLatestMessage(latestMessage);
+                            return contactItem;
+                        })
+        ));
+    }
+
+    @GetMapping("/chat/conversation/{conversationId}/latest")
+    public ResponseEntity<ChatMessageDTO> getLatestMessage(@PathVariable(name = "conversationId") final UUID conversationId) {
+        return ResponseEntity.ok(chatMessageService.getLatestMessage(conversationId));
     }
 
     @GetMapping("/chat/conversation/{conversationId}")

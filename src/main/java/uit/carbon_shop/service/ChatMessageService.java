@@ -64,6 +64,12 @@ public class ChatMessageService {
                 .map(chatMessage -> chatMessageMapper.updateChatMessageDTO(chatMessage, new ChatMessageDTO()));
     }
 
+    public ChatMessageDTO getLatestMessage(UUID conversationId) {
+        return chatMessageRepository.findFirstByConversationIdOrderByCreatedAtDesc(conversationId)
+                .map(chatMessage -> chatMessageMapper.updateChatMessageDTO(chatMessage, new ChatMessageDTO()))
+                .orElseThrow(NotFoundException::new);
+    }
+
     public ChatMessageDTO get(final Long id) {
         return chatMessageRepository.findById(id)
                 .map(chatMessage -> chatMessageMapper.updateChatMessageDTO(chatMessage, new ChatMessageDTO()))

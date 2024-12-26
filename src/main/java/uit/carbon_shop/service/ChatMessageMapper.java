@@ -22,6 +22,7 @@ public interface ChatMessageMapper {
 
     @Mapping(target = "sender", ignore = true)
     @Mapping(target = "receiver", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     ChatMessageDTO updateChatMessageDTO(ChatMessage chatMessage,
             @MappingTarget ChatMessageDTO chatMessageDTO);
 
@@ -30,11 +31,13 @@ public interface ChatMessageMapper {
             @MappingTarget ChatMessageDTO chatMessageDTO) {
         chatMessageDTO.setSender(chatMessage.getSender() == null ? null : chatMessage.getSender().getId());
         chatMessageDTO.setReceiver(chatMessage.getReceiver() == null ? null : chatMessage.getReceiver().getId());
+        chatMessageDTO.setCreatedAt(chatMessage.getCreatedAt().toLocalDateTime());
     }
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "sender", ignore = true)
     @Mapping(target = "receiver", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     ChatMessage updateChatMessage(ChatMessageDTO chatMessageDTO,
             @MappingTarget ChatMessage chatMessage, @Context AppUserRepository appUserRepository);
 

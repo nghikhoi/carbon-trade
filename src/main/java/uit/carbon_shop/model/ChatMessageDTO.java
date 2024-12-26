@@ -2,6 +2,7 @@ package uit.carbon_shop.model;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,5 +25,7 @@ public class ChatMessageDTO {
     private Long sender;
 
     private Long receiver;
+
+    private LocalDateTime createdAt;
 
 }

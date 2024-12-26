@@ -24,6 +24,14 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     Page<Project> findByStatusAndNameContainsIgnoreCase(ProjectStatus status, String name, Pageable pageable);
 
+    Page<Project> findByOwnerCompany_IdNotAndNameContainsIgnoreCase(Long id, String name, Pageable pageable);
+
+    Page<Project> findByOwnerCompany_IdNotAndStatusAndNameContainsIgnoreCase(Long id, ProjectStatus status, String name, Pageable pageable);
+
+    Page<Project> findByOwnerCompany_IdNotAndStatus(Long id, ProjectStatus status, Pageable pageable);
+
+    Page<Project> findByOwnerCompany_IdNot(Long id, Pageable pageable);
+
     Project findFirstByOwnerCompany(Company company);
 
     Project findFirstByAuditBy(AppUser appUser);

@@ -49,7 +49,7 @@ public class ChatMessageService {
     }
 
     public Page<UUID> findConversation(long userId, Pageable pageable) {
-        return chatMessageRepository.findDistinctBySender_IdOrReceiver_IdOrderByCreatedAtDesc(userId, userId, pageable)
+        return chatMessageRepository.findDistinctConversationIdBySenderIdOrReceiverIdOrderByCreatedAtDesc(userId, userId, pageable)
                 .map(ChatMessageConversationIdProjection::getConversationId);
     }
 

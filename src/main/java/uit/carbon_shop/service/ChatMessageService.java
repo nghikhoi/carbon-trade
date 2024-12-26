@@ -78,6 +78,7 @@ public class ChatMessageService {
 
     public Long create(final ChatMessageDTO chatMessageDTO) {
         final ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setId(chatMessageDTO.getId());
         chatMessageMapper.updateChatMessage(chatMessageDTO, chatMessage, appUserRepository);
         return chatMessageRepository.save(chatMessage).getId();
     }

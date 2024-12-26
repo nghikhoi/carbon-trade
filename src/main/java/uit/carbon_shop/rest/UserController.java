@@ -174,6 +174,7 @@ public class UserController {
         var conversationId = chatMessageService.findConversation(userId, sendChatMessageDTO.getReceiver())
                 .orElse(UUID.randomUUID());
         var chatMessage = new ChatMessageDTO();
+        chatMessage.setId(idGeneratorService.generateId());
         chatMessage.setContent(sendChatMessageDTO.getContent());
         chatMessage.setFileId(sendChatMessageDTO.getFileId());
         chatMessage.setConversationId(conversationId);

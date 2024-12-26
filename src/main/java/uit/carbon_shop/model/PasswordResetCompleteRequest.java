@@ -14,8 +14,4 @@ public class PasswordResetCompleteRequest {
     @Size(max = 255)
     private String uid;
 
-    @NotNull
-    @Size(max = 255)
-    private String newPassword;
-
 }

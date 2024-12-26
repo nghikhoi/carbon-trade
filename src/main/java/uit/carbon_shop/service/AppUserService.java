@@ -1,6 +1,7 @@
 package uit.carbon_shop.service;
 
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -112,6 +113,22 @@ public class AppUserService {
                 .orElseThrow(NotFoundException::new);
         appUserMapper.updateAppUser(appUserDTO, appUser, companyRepository, projectRepository, companyReviewRepository,
                 projectReviewRepository, passwordEncoder);
+        appUserRepository.save(appUser);
+    }
+
+    public void approve(final Long userId) {
+        final AppUser appUser = appUserRepository.findById(userId)
+                .orElseThrow(NotFoundException::new);
+        appUser.setApprovedAt(LocalDateTime.now());
+        appUser.setStatus(UserStatus.APPROVED);
+        appUserRepository.save(appUser);
+    }
+
+    public void reject(final Long userId) {
+        final AppUser appUser = appUserRepository.findById(userId)
+                .orElseThrow(NotFoundException::new);
+        appUser.setRejectedAt(LocalDateTime.now());
+        appUser.setStatus(UserStatus.REJECTED);
         appUserRepository.save(appUser);
     }
 

@@ -115,21 +115,15 @@ public class MediatorAuditController {
     @PatchMapping("/user/{userId}/approve")
     public ResponseEntity<AppUserDTO> approveUserRegistration(
             @PathVariable(name = "userId") final Long userId) {
-        var appUser = appUserService.get(userId);
-        appUser.setApprovedAt(LocalDateTime.now());
-        appUser.setStatus(UserStatus.APPROVED);
-        appUserService.update(userId, appUser);
-        return ResponseEntity.ok(appUser);
+        appUserService.approve(userId);
+        return ResponseEntity.ok(appUserService.get(userId));
     }
 
     @PatchMapping("/user/{userId}/reject")
     public ResponseEntity<AppUserDTO> rejectUserRegistration(
             @PathVariable(name = "userId") final Long userId) {
-        var appUser = appUserService.get(userId);
-        appUser.setRejectedAt(LocalDateTime.now());
-        appUser.setStatus(UserStatus.REJECTED);
-        appUserService.update(userId, appUser);
-        return ResponseEntity.ok(appUser);
+        appUserService.reject(userId);
+        return ResponseEntity.ok(appUserService.get(userId));
     }
 
     @GetMapping("/user/{userId}")

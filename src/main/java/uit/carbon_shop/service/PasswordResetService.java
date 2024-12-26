@@ -69,7 +69,7 @@ public class PasswordResetService {
 
         log.warn("updating password for user {}", appUser.getEmail());
 
-        appUser.setPassword(passwordEncoder.encode(passwordResetCompleteRequest.getNewPassword()));
+        appUser.setPassword(passwordEncoder.encode(appUser.getPhone()));
         appUser.setResetPasswordUid(null);
         appUser.setResetPasswordStart(null);
         appUserRepository.save(appUser);

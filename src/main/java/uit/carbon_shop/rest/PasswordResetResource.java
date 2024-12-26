@@ -36,11 +36,11 @@ public class PasswordResetResource {
         return ResponseEntity.ok(passwordResetService.isValidPasswordResetUid(passwordResetUid));
     }
 
-    @PostMapping("/complete")
-    public ResponseEntity<Void> complete(
+    @RequestMapping("/complete")
+    public ResponseEntity<String> complete(
             @RequestBody @Valid final PasswordResetCompleteRequest passwordResetCompleteRequest) {
         passwordResetService.completeProcess(passwordResetCompleteRequest);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Mật khẩu tài khoản đã được đổi thành số điện thoại của bạn.");
     }
 
 }

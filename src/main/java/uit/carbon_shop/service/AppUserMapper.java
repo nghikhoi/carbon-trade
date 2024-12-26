@@ -22,6 +22,7 @@ import uit.carbon_shop.repos.CompanyReviewRepository;
 import uit.carbon_shop.repos.ProjectRepository;
 import uit.carbon_shop.repos.ProjectReviewRepository;
 import uit.carbon_shop.util.NotFoundException;
+import uit.carbon_shop.util.StaticConstants;
 
 
 @Mapper(
@@ -50,6 +51,9 @@ public interface AppUserMapper {
         appUserDTO.setLikeProjectReviews(appUser.getLikeProjectReviews().stream()
                 .map(projectReview -> projectReview.getId())
                 .toList());
+        if (appUserDTO.getAvatar() == null) {
+            appUserDTO.setAvatar(StaticConstants.DEFAULT_AVATAR_ID);
+        }
     }
 
     @Mapping(target = "id", ignore = true)
@@ -94,6 +98,9 @@ public interface AppUserMapper {
         }
         appUser.setLikeProjectReviews(new HashSet<>(likeProjectReviews));
         appUser.setPassword(passwordEncoder.encode(appUserDTO.getPassword()));
+        if (appUser.getAvatar() == null) {
+            appUser.setAvatar(StaticConstants.DEFAULT_AVATAR_ID);
+        }
     }
 
 }

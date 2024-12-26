@@ -1,15 +1,20 @@
 package uit.carbon_shop.rest;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.ResourceUtils;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +27,7 @@ import uit.carbon_shop.model.UserRole;
 import uit.carbon_shop.repos.FileContentStore;
 import uit.carbon_shop.repos.FileDocumentRepository;
 import uit.carbon_shop.service.IdGeneratorService;
+import uit.carbon_shop.util.StaticConstants;
 
 
 @RestController
@@ -50,7 +56,15 @@ public class FileController {
     }
 
     @GetMapping("/{fileId}")
+    @SneakyThrows
     public ResponseEntity<Resource> get(@PathVariable(name = "fileId") final Long fileId) {
+        if (Objects.equals(StaticConstants.DEFAULT_AVATAR_ID, fileId)) {
+            ClassPathResource imgFile = new ClassPathResource("default-avatar.png");
+            byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_PNG)
+                    .body(new ByteArrayResource(bytes));
+        }
         Optional<FileDocument> optionalDoc = fileRepository.findById(fileId);
 
         if (optionalDoc.isPresent()) {

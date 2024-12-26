@@ -24,6 +24,7 @@ public interface CompanyReviewMapper {
 
     @Mapping(target = "company", ignore = true)
     @Mapping(target = "reviewBy", ignore = true)
+    @Mapping(target = "likeCount", ignore = true)
     CompanyReviewDTO updateCompanyReviewDTO(CompanyReview companyReview,
             @MappingTarget CompanyReviewDTO companyReviewDTO);
 
@@ -32,6 +33,7 @@ public interface CompanyReviewMapper {
             @MappingTarget CompanyReviewDTO companyReviewDTO) {
         companyReviewDTO.setCompany(companyReview.getCompany() == null ? null : companyReview.getCompany().getId());
         companyReviewDTO.setReviewBy(companyReview.getReviewBy() == null ? null : companyReview.getReviewBy().getId());
+        companyReviewDTO.setLikeCount(companyReview.getLikedBy().size());
     }
 
     @Mapping(target = "id", ignore = true)

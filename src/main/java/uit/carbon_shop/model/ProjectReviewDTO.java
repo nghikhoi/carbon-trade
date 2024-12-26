@@ -25,4 +25,6 @@ public class ProjectReviewDTO {
 
     private Long reviewBy;
 
+    private int likeCount;
+
 }

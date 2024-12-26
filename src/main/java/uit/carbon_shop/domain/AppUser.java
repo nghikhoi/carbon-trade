@@ -95,6 +95,22 @@ public class AppUser {
     @OneToMany(mappedBy = "askedBy")
     private Set<Question> askedQuestions;
 
+    @ManyToMany
+    @JoinTable(
+            name = "LikeCompanyReviews",
+            joinColumns = @JoinColumn(name = "appUserId"),
+            inverseJoinColumns = @JoinColumn(name = "companyReviewId")
+    )
+    private Set<CompanyReview> likedCompanyReviews;
+
+    @ManyToMany
+    @JoinTable(
+            name = "LikeProjectReviews",
+            joinColumns = @JoinColumn(name = "appUserId"),
+            inverseJoinColumns = @JoinColumn(name = "projectReviewId")
+    )
+    private Set<ProjectReview> likeProjectReviews;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private OffsetDateTime createdAt;

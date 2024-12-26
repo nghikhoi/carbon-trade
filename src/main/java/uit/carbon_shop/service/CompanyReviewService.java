@@ -1,5 +1,6 @@
 package uit.carbon_shop.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,7 @@ import uit.carbon_shop.util.NotFoundException;
 
 
 @Service
+@Transactional
 public class CompanyReviewService {
 
     private final CompanyReviewRepository companyReviewRepository;
@@ -58,6 +60,10 @@ public class CompanyReviewService {
                 pageable, page.getTotalElements());
     }
 
+    public int getLikeCount(final Long id) {
+        return companyReviewRepository.findById(id).map(CompanyReview::getLikedBy).orElseThrow(NotFoundException::new).size();
+    }
+
     public CompanyReviewDTO get(final Long id) {
         return companyReviewRepository.findById(id)
                 .map(companyReview -> companyReviewMapper.updateCompanyReviewDTO(companyReview, new CompanyReviewDTO()))
@@ -79,7 +85,12 @@ public class CompanyReviewService {
     }
 
     public void delete(final Long id) {
-        companyReviewRepository.deleteById(id);
+        final CompanyReview companyReview = companyReviewRepository.findById(id)
+                .orElseThrow(NotFoundException::new);
+        // remove many-to-many relations at owning side
+        appUserRepository.findAllByLikedCompanyReviews(companyReview)
+                .forEach(appUser -> appUser.getLikedCompanyReviews().remove(companyReview));
+        companyReviewRepository.delete(companyReview);
     }
 
 }

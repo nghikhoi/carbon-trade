@@ -18,9 +18,9 @@ spring:
         id:
           new_generator_mappings: true
   mail:
-    host: ${SMTP_HOST:email-smtp.eu-central-1.amazonaws.com}
-    username: ${SMTP_USERNAME:<<YOUR_USERNAME>>}
-    password: ${SMTP_PASSWORD:<<YOUR_PASSWORD>>}
+    host: ${SMTP_HOST:smtp.gmail.com}
+    username: ${SMTP_USERNAME:a}
+    password: ${SMTP_PASSWORD:a}
     port: 587
     properties.mail.smtp:
       auth: true

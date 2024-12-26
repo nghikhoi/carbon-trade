@@ -54,4 +54,8 @@ public class AppUserDTO {
 
     private List<Long> favoriteProjects;
 
+    private List<Long> likedCompanyReviews;
+
+    private List<Long> likeProjectReviews;
+
 }

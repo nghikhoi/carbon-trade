@@ -24,6 +24,7 @@ public interface ProjectReviewMapper {
 
     @Mapping(target = "project", ignore = true)
     @Mapping(target = "reviewBy", ignore = true)
+    @Mapping(target = "likeCount", ignore = true)
     ProjectReviewDTO updateProjectReviewDTO(ProjectReview projectReview,
             @MappingTarget ProjectReviewDTO projectReviewDTO);
 
@@ -32,6 +33,7 @@ public interface ProjectReviewMapper {
             @MappingTarget ProjectReviewDTO projectReviewDTO) {
         projectReviewDTO.setProject(projectReview.getProject() == null ? null : projectReview.getProject().getId());
         projectReviewDTO.setReviewBy(projectReview.getReviewBy() == null ? null : projectReview.getReviewBy().getId());
+        projectReviewDTO.setLikeCount(projectReview.getLikeBy().size());
     }
 
     @Mapping(target = "id", ignore = true)

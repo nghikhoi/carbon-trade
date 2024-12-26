@@ -23,4 +23,6 @@ public class CompanyReviewDTO {
 
     private Long reviewBy;
 
+    private int likeCount;
+
 }

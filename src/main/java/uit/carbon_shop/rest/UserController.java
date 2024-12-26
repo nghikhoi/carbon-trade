@@ -3,6 +3,8 @@ package uit.carbon_shop.rest;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import java.util.ArrayList;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,17 +22,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uit.carbon_shop.model.AppUserDTO;
+import uit.carbon_shop.model.ChatMessageDTO;
 import uit.carbon_shop.model.CompanyDTO;
+import uit.carbon_shop.model.LikeResultDTO;
+import uit.carbon_shop.model.PagedChatMessageDTO;
 import uit.carbon_shop.model.PagedCompanyReviewDTO;
 import uit.carbon_shop.model.PagedProjectDTO;
 import uit.carbon_shop.model.PagedProjectReviewDTO;
 import uit.carbon_shop.model.PagedQuestionDTO;
+import uit.carbon_shop.model.PagedUUIDDTO;
 import uit.carbon_shop.model.ProjectDTO;
 import uit.carbon_shop.model.QuestionDTO;
+import uit.carbon_shop.model.SendChatMessageDTO;
 import uit.carbon_shop.model.UserAskDTO;
 import uit.carbon_shop.model.UserRole;
 import uit.carbon_shop.model.UserUserDetails;
 import uit.carbon_shop.service.AppUserService;
+import uit.carbon_shop.service.ChatMessageService;
 import uit.carbon_shop.service.CompanyReviewService;
 import uit.carbon_shop.service.CompanyService;
 import uit.carbon_shop.service.IdGeneratorService;
@@ -52,6 +61,7 @@ public class UserController {
     private final ProjectReviewService projectReviewService;
     private final AppUserService appUserService;
     private final CompanyService companyService;
+    private final ChatMessageService chatMessageService;
 
     @PostMapping("/question")
     public ResponseEntity<QuestionDTO> newQuestion(@RequestBody @Valid final UserAskDTO userAskDTO,
@@ -119,6 +129,95 @@ public class UserController {
     public ResponseEntity<AppUserDTO> viewCompanyUser(
             @PathVariable(name = "companyId") final Long companyId) {
         return ResponseEntity.ok(appUserService.findByCompany(companyId));
+    }
+
+    @GetMapping("/chat/conversations")
+    public ResponseEntity<PagedUUIDDTO> getConversations(Authentication authentication,
+            @Parameter(hidden = true) @PageableDefault(size = 20) final Pageable pageable) {
+        var userId = ((UserUserDetails) authentication.getPrincipal()).getUserId();
+        return ResponseEntity.ok(new PagedUUIDDTO(chatMessageService.findConversation(userId, pageable)));
+    }
+
+    @GetMapping("/chat/conversation/{conversationId}")
+    public ResponseEntity<PagedChatMessageDTO> getConversationMessages(
+            @PathVariable(name = "conversationId") final UUID conversationId,
+            @Parameter(hidden = true) @PageableDefault(size = 20) final Pageable pageable) {
+        return ResponseEntity.ok(
+                new PagedChatMessageDTO(chatMessageService.getConversationMessages(conversationId, pageable)));
+    }
+
+    @PostMapping("/chat")
+    public ResponseEntity<ChatMessageDTO> sendMessage(@RequestBody @Valid final SendChatMessageDTO sendChatMessageDTO,
+            Authentication authentication) {
+        var userId = ((UserUserDetails) authentication.getPrincipal()).getUserId();
+        var conversationId = chatMessageService.findConversation(userId, sendChatMessageDTO.getReceiver())
+                .orElse(UUID.randomUUID());
+        var chatMessage = new ChatMessageDTO();
+        chatMessage.setContent(sendChatMessageDTO.getContent());
+        chatMessage.setFileId(sendChatMessageDTO.getFileId());
+        chatMessage.setConversationId(conversationId);
+        chatMessage.setSender(userId);
+        chatMessage.setReceiver(sendChatMessageDTO.getReceiver());
+        var messageId = chatMessageService.create(chatMessage);
+        return ResponseEntity.ok(chatMessageService.get(messageId));
+    }
+
+    @PatchMapping("/company/review/{reviewId}/like")
+    public ResponseEntity<LikeResultDTO> likeCompanyReview(
+            @PathVariable(name = "reviewId") final Long reviewId,
+            Authentication authentication
+    ) {
+        LikeResultDTO resultDTO = new LikeResultDTO();
+        var userId = ((UserUserDetails) authentication.getPrincipal()).getUserId();
+        var appUser = appUserService.get(userId);
+        if (appUser.getLikedCompanyReviews() != null && appUser.getLikedCompanyReviews().contains(reviewId)) {
+            appUser.getLikedCompanyReviews().remove(reviewId);
+            appUserService.update(appUser.getUserId(), appUser);
+
+            var likeCount = companyReviewService.getLikeCount(reviewId);
+            resultDTO.setLikeCount(likeCount);
+            resultDTO.setLike(false);
+        } else {
+            if (appUser.getLikedCompanyReviews() == null) {
+                appUser.setLikedCompanyReviews(new ArrayList<>());
+            }
+            appUser.getLikedCompanyReviews().add(reviewId);
+            appUserService.update(appUser.getUserId(), appUser);
+
+            var likeCount = companyReviewService.getLikeCount(reviewId);
+            resultDTO.setLikeCount(likeCount);
+            resultDTO.setLike(true);
+        }
+        return ResponseEntity.ok(resultDTO);
+    }
+
+    @PatchMapping("/project/review/{reviewId}/like")
+    public ResponseEntity<LikeResultDTO> likeProjectReview(
+            @PathVariable(name = "reviewId") final Long reviewId,
+            Authentication authentication
+    ) {
+        LikeResultDTO resultDTO = new LikeResultDTO();
+        var userId = ((UserUserDetails) authentication.getPrincipal()).getUserId();
+        var appUser = appUserService.get(userId);
+        if (appUser.getLikeProjectReviews() != null && appUser.getLikeProjectReviews().contains(reviewId)) {
+            appUser.getLikeProjectReviews().remove(reviewId);
+            appUserService.update(appUser.getUserId(), appUser);
+
+            var likeCount = projectReviewService.getLikeCount(reviewId);
+            resultDTO.setLikeCount(likeCount);
+            resultDTO.setLike(false);
+        } else {
+            if (appUser.getLikeProjectReviews() == null) {
+                appUser.setLikeProjectReviews(new ArrayList<>());
+            }
+            appUser.getLikeProjectReviews().add(reviewId);
+            appUserService.update(appUser.getUserId(), appUser);
+
+            var likeCount = projectReviewService.getLikeCount(reviewId);
+            resultDTO.setLikeCount(likeCount);
+            resultDTO.setLike(true);
+        }
+        return ResponseEntity.ok(resultDTO);
     }
 
 }

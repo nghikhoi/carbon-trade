@@ -37,9 +37,8 @@ public class PasswordResetResource {
     }
 
     @RequestMapping("/complete")
-    public ResponseEntity<String> complete(
-            @RequestBody @Valid final PasswordResetCompleteRequest passwordResetCompleteRequest) {
-        passwordResetService.completeProcess(passwordResetCompleteRequest);
+    public ResponseEntity<String> complete(@RequestParam(value = "uid", required = true) String uid) {
+        passwordResetService.completeProcess(uid);
         return ResponseEntity.ok("Mật khẩu tài khoản đã được đổi thành số điện thoại của bạn.");
     }
 

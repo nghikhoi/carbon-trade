@@ -63,8 +63,8 @@ public class PasswordResetService {
         return false;
     }
 
-    public void completeProcess(final PasswordResetCompleteRequest passwordResetCompleteRequest) {
-        final AppUser appUser = appUserRepository.findByResetPasswordUid(passwordResetCompleteRequest.getUid());
+    public void completeProcess(String uid) {
+        final AppUser appUser = appUserRepository.findByResetPasswordUid(uid);
         Assert.isTrue(hasValidRequest(appUser), "invalid update password request");
 
         log.warn("updating password for user {}", appUser.getEmail());

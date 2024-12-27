@@ -79,11 +79,24 @@ public class UserController {
 
     @GetMapping("/questions")
     public ResponseEntity<PagedQuestionDTO> viewQuestions(
+            @RequestParam(name = "self", required = false) final Boolean self,
             @RequestParam(name = "answered", required = false) final Boolean answered,
-            @Parameter(hidden = true) @PageableDefault(size = 20) final Pageable pageable
+            @Parameter(hidden = true) @PageableDefault(size = 20) final Pageable pageable,
+            Authentication authentication
     ) {
-        Page<QuestionDTO> page = answered != null && answered ? questionService.findByAnswerIsNotNull(pageable)
-                : questionService.findByAnswerIsNull(pageable);
+        var userId = ((UserUserDetails) authentication.getPrincipal()).getUserId();
+        Page<QuestionDTO> page;
+        if (self == null || !self) {
+            page = answered == null ?
+                    questionService.findAll(null, pageable)
+                    : answered ? questionService.findByAnswerIsNotNull(pageable)
+                            : questionService.findByAnswerIsNull(pageable);
+        } else {
+            page = answered == null ?
+                    questionService.findByAskedBy(userId, pageable)
+                    : answered ? questionService.findByAnswerIsNotNullAndAskedBy(userId, pageable)
+                            : questionService.findByAnswerIsNullAndAskedBy(userId, pageable);
+        }
         return ResponseEntity.ok(new PagedQuestionDTO(page));
     }
 
@@ -145,8 +158,9 @@ public class UserController {
                             var contactItem = new ContactItemDTO();
                             var latestMessage = chatMessageService.getLatestMessage(conversationId);
                             contactItem.setConversationId(conversationId);
-                            contactItem.setChatUserId(latestMessage.getReceiver().equals(userId) ? latestMessage.getSender()
-                                    : latestMessage.getReceiver());
+                            contactItem.setChatUserId(
+                                    latestMessage.getReceiver().equals(userId) ? latestMessage.getSender()
+                                            : latestMessage.getReceiver());
                             contactItem.setLatestMessage(latestMessage);
                             return contactItem;
                         })
@@ -154,7 +168,8 @@ public class UserController {
     }
 
     @GetMapping("/chat/conversation/{conversationId}/latest")
-    public ResponseEntity<ChatMessageDTO> getLatestMessage(@PathVariable(name = "conversationId") final UUID conversationId) {
+    public ResponseEntity<ChatMessageDTO> getLatestMessage(
+            @PathVariable(name = "conversationId") final UUID conversationId) {
         return ResponseEntity.ok(chatMessageService.getLatestMessage(conversationId));
     }
 

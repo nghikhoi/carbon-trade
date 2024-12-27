@@ -63,6 +63,33 @@ public class QuestionService {
                 pageable, page.getTotalElements());
     }
 
+    public Page<QuestionDTO> findByAskedBy(final Long id, final Pageable pageable) {
+        final Page<Question> page = questionRepository.findByAskedBy_Id(id, pageable);
+        return new PageImpl<>(page.getContent()
+                .stream()
+                .map(question -> questionMapper.updateQuestionDTO(question, new QuestionDTO()))
+                .toList(),
+                pageable, page.getTotalElements());
+    }
+
+    public Page<QuestionDTO> findByAnswerIsNotNullAndAskedBy(final Long id, final Pageable pageable) {
+        final Page<Question> page = questionRepository.findByAnswerNotNullAndAskedBy_Id(id, pageable);
+        return new PageImpl<>(page.getContent()
+                .stream()
+                .map(question -> questionMapper.updateQuestionDTO(question, new QuestionDTO()))
+                .toList(),
+                pageable, page.getTotalElements());
+    }
+
+    public Page<QuestionDTO> findByAnswerIsNullAndAskedBy(final Long id, final Pageable pageable) {
+        final Page<Question> page = questionRepository.findByAnswerNullAndAskedBy_Id(id, pageable);
+        return new PageImpl<>(page.getContent()
+                .stream()
+                .map(question -> questionMapper.updateQuestionDTO(question, new QuestionDTO()))
+                .toList(),
+                pageable, page.getTotalElements());
+    }
+
     public QuestionDTO get(final Long id) {
         return questionRepository.findById(id)
                 .map(question -> questionMapper.updateQuestionDTO(question, new QuestionDTO()))
